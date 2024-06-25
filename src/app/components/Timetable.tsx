@@ -1,0 +1,106 @@
+import React, { useEffect, useState } from 'react';
+import { fetchTimetable, fetchTimetableSub } from '../lib/api';
+
+const Timetable: React.FC = () => {
+  const [year, setYear] = useState(2567);
+  const [semester, setSemester] = useState(1);
+  const [startDate, setStartDate] = useState('2024-06-23');
+  const [endDate, setEndDate] = useState('2024-06-29');
+  const [timetable, setTimetable] = useState<any[]>([]);
+  const [timetableSub, setTimetableSub] = useState<any[]>([]);
+
+  useEffect(() => {
+    const getData = async () => {
+      try {
+        const timetableData = await fetchTimetable(year, semester);
+        const timetableSubData = await fetchTimetableSub(year, semester, startDate, endDate);
+        setTimetable(timetableData);
+        setTimetableSub(timetableSubData);
+        console.log('timetableData:', timetableData);
+        console.log('timetableSubData:', timetableSubData);
+      } catch (error) {
+        console.error('Error fetching timetable data:', error);
+      }
+    };
+    getData();
+  }, [year, semester, startDate, endDate]);
+
+  const days = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'];
+  const hours = Array.from({ length: 16 }, (_, i) => 6 + i);
+
+  return (
+    <div className="container mx-auto p-4">
+      <div className="mb-4 flex space-x-4">
+        <div>
+          <label className="block mb-2">Year:</label>
+          <select value={year} onChange={(e) => setYear(Number(e.target.value))} className="p-1 border border-gray-300 rounded">
+            <option value={2566}>2566</option>
+            <option value={2567}>2567</option>
+            <option value={2568}>2568</option>
+          </select>
+        </div>
+        <div>
+          <label className="block mb-2">Semester:</label>
+          <select value={semester} onChange={(e) => setSemester(Number(e.target.value))} className="p-1 border border-gray-300 rounded">
+            <option value={1}>1</option>
+            <option value={2}>2</option>
+            <option value={3}>3</option>
+          </select>
+        </div>
+        <div>
+          <label className="block mb-2">Start Date:</label>
+          <input type="date" value={startDate} onChange={(e) => setStartDate(e.target.value)} className="p-1 border border-gray-300 rounded" />
+        </div>
+        <div>
+          <label className="block mb-2">End Date:</label>
+          <input type="date" value={endDate} onChange={(e) => setEndDate(e.target.value)} className="p-1 border border-gray-300 rounded" />
+        </div>
+      </div>
+
+      <div className="overflow-auto">
+        <table className="min-w-full border-collapse border border-gray-300">
+          <thead>
+            <tr>
+              <th className="border border-gray-300 p-2"></th>
+              {hours.map((hour) => (
+                <th key={hour} className="border border-gray-300 p-2 text-center">{`${hour}:00 - ${hour + 1}:00`}</th>
+              ))}
+            </tr>
+          </thead>
+          <tbody>
+            {days.map((day, dayIndex) => (
+              <tr key={day}>
+                <td className="border border-gray-300 p-2 text-center">{day}</td>
+                {hours.map((hour) => (
+                  <td key={`${dayIndex}-${hour}`} className="border border-gray-300 p-2 text-center">
+                    {timetableSub.length > 0 &&
+                      timetableSub
+                        .filter((item) => item.weekday === dayIndex + 1 && item.tfrom <= hour && item.tto > hour)
+                        .map((item, idx) => (
+                          <div key={idx} className="bg-blue-200 p-1 rounded">
+                            {item.coursecode} ({item.sectioncode}) {item.roomname}
+                          </div>
+                        ))}
+                  </td>
+                ))}
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      </div>
+
+      <div className="mt-4">
+        <h2 className="text-xl mb-2">Subjects</h2>
+        <div className="space-y-2">
+          {timetable.map((subject) => (
+            <div key={subject.courseid} className="bg-green-200 p-2 rounded">
+              {subject.coursecode} - {subject.coursename} ({subject.sectioncode})
+            </div>
+          ))}
+        </div>
+      </div>
+    </div>
+  );
+};
+
+export default Timetable;
