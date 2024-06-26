@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { fetchCourses, fetchDepartments } from '../lib/api';
 import { IconLoader } from '@tabler/icons-react';
 
@@ -37,7 +37,7 @@ export default function Courses() {
     }
   };
 
-  React.useEffect(() => {
+  useEffect(() => {
     const getDepartments = async (facultyId: number) => {
       try {
         const departmentsData = await fetchDepartments(facultyId);
@@ -54,6 +54,7 @@ export default function Courses() {
     };
     getDepartments(faculty);
   }, [faculty]);
+  
   return (
     <div className="bg-orange-100 p-4 rounded-lg">
       <h1 className="text-2xl mb-4">วิชาที่เปิดสอน</h1>

@@ -1,6 +1,7 @@
 import axios from 'axios';
 import { gunzipSync } from 'zlib';
-import { TOKEN_API_URL, TIMETABLE_API_URL, CLASSINFO } from '@/config';
+import { TOKEN_API_URL, TIMETABLE_API_URL, CLASSINFO_API_URL, LOGIN_API_URL } from '@/config';
+import Encryptor from '@/app/lib/encryption';
 
 let token = '';
 
@@ -36,6 +37,22 @@ axiosInstance.interceptors.response.use(
   }
 );
 
+export const userLogin = async (username: string, password: string) => {
+  const encryptor = new Encryptor();
+  const authHeader = await getAuthHeader();
+  const credentials = { username, password };
+  const encryptedData = encryptor.encryptData(JSON.stringify(credentials));
+  const payload = {
+      "param": encryptedData
+  };
+
+  console.log('Send payload:', payload)
+  const res = await axiosInstance.post(LOGIN_API_URL, payload, authHeader);
+
+  console.log('userLogin res :', res);
+  return res.data.result;
+}
+
 export const fetchTimetable = async (year: number, semester: number) => {
   const authHeader = await getAuthHeader();
   const res = await axiosInstance.get(`${TIMETABLE_API_URL}/Timetable/${year}/${semester}`, authHeader);
@@ -67,7 +84,7 @@ export const fetchCourses = async (
     courseName = '-';
   }
   
-  const url = `${CLASSINFO}/Classinfo/${academicYear}/${semester}/${campus}/-/${level}/${faculty}/${department}/${courseCode}/${courseName}/-/0`;
+  const url = `${CLASSINFO_API_URL}/Classinfo/${academicYear}/${semester}/${campus}/-/${level}/${faculty}/${department}/${courseCode}/${courseName}/-/0`;
   const res = await axiosInstance.get(url, authHeader);
   return decodeBase64Response(res.data.result);
 };
@@ -99,6 +116,7 @@ const getTokenTime = (): number => {
 
 const fetchNewToken = async (): Promise<string> => {
   const res = await axios.get(TOKEN_API_URL);
+  console.log('New token:', res.data.token);
   const token = res.data.token;
   setStorage('tokenweb', token);
   setStorage('tokentime', Math.floor(Date.now() / 1000)); // Store current time in seconds
