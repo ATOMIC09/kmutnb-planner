@@ -34,9 +34,14 @@ const Timetable: React.FC = () => {
         <div>
           <label className="block mb-2">Year:</label>
           <select value={year} onChange={(e) => setYear(Number(e.target.value))} className="p-1 border border-gray-300 rounded">
-            <option value={2566}>2566</option>
             <option value={2567}>2567</option>
-            <option value={2568}>2568</option>
+            <option value={2566}>2566</option>
+            <option value={2565}>2565</option>
+            <option value={2564}>2564</option>
+            <option value={2563}>2563</option>
+            <option value={2562}>2562</option>
+            <option value={2561}>2561</option>
+            <option value={2560}>2560</option>
           </select>
         </div>
         <div>
