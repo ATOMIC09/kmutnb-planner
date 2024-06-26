@@ -13,25 +13,16 @@ export default function Courses() {
   const [courseName, setCourseName] = useState<string>('-');
 
   useEffect(() => {
-    const fetchData = async () => {
+    const getData = async () => {
       try {
-        const data = await fetchCourses(
-          academicYear,
-          semester,
-          campus,
-          level,
-          faculty,
-          department,
-          courseCode,
-          courseName
-        );
-        setCourses(data);
+        const coursesData = await fetchCourses(academicYear, semester, campus, level, faculty, department, courseCode, courseName);
+        setCourses(coursesData);
+        console.log('coursesData:', coursesData);
       } catch (error) {
-        console.error('Error fetching course data:', error);
+        console.error('Error fetching courses data:', error);
       }
     };
-
-    fetchData();
+    getData();
   }, [academicYear, semester, campus, level, faculty, department, courseCode, courseName]);
 
   return (
@@ -75,7 +66,9 @@ export default function Courses() {
             onChange={(e) => setCampus(Number(e.target.value))}
             className="p-1 border border-gray-300 rounded"
           >
-            {/* Add options for Campus */}
+            <option value={10}>10</option>
+            <option value={20}>20</option>
+            <option value={30}>30</option>
           </select>
         </div>
         <div>
@@ -85,7 +78,9 @@ export default function Courses() {
             onChange={(e) => setLevel(Number(e.target.value))}
             className="p-1 border border-gray-300 rounded"
           >
-            {/* Add options for Level */}
+            <option value={61}>61</option>
+            <option value={62}>62</option>
+            <option value={63}>63</option>
           </select>
         </div>
         <div>
@@ -95,7 +90,9 @@ export default function Courses() {
             onChange={(e) => setFaculty(Number(e.target.value))}
             className="p-1 border border-gray-300 rounded"
           >
-            {/* Add options for Faculty/College */}
+            <option value={3}>3</option>
+            <option value={4}>4</option>
+            <option value={5}>5</option>
           </select>
         </div>
         <div>
@@ -105,7 +102,9 @@ export default function Courses() {
             onChange={(e) => setDepartment(Number(e.target.value))}
             className="p-1 border border-gray-300 rounded"
           >
-            {/* Add options for Department */}
+            <option value={305}>305</option>
+            <option value={306}>306</option>
+            <option value={307}>307</option>
           </select>
         </div>
         <div>
