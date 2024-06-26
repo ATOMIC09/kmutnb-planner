@@ -1,5 +1,5 @@
-import React, { useEffect, useState } from 'react';
-import { fetchCourses } from '../lib/api';
+import React, { useState } from 'react';
+import { fetchCourses, fetchDepartments } from '../lib/api';
 
 export default function Courses() {
   const [courses, setCourses] = useState<any[]>([]);
@@ -7,135 +7,242 @@ export default function Courses() {
   const [semester, setSemester] = useState<number>(1);
   const [campus, setCampus] = useState<number>(10);
   const [level, setLevel] = useState<number>(61);
-  const [faculty, setFaculty] = useState<number>(1);
-  const [department, setDepartment] = useState<number>(100);
-  const [courseCode, setCourseCode] = useState<string>('-');
-  const [courseName, setCourseName] = useState<string>('-');
+  const [faculty, setFaculty] = useState<number>(0);
+  const [department, setDepartment] = useState<number>(0);
+  const [departments, setDepartments] = useState<any[]>([]);
+  const [courseCode, setCourseCode] = useState<string>('');
+  const [courseName, setCourseName] = useState<string>('');
 
-  useEffect(() => {
-    const getData = async () => {
+  const handleFetchData = async () => {
+    try {
+      const coursesData = await fetchCourses(
+        academicYear,
+        semester,
+        campus,
+        level,
+        faculty,
+        department,
+        courseCode,
+        courseName
+      );
+      setCourses(coursesData);
+      console.log('coursesData:', coursesData);
+    } catch (error) {
+      console.error('Error fetching courses data:', error);
+    }
+  };
+
+  React.useEffect(() => {
+    const getDepartments = async (facultyId: number) => {
       try {
-        const coursesData = await fetchCourses(academicYear, semester, campus, level, faculty, department, courseCode, courseName);
-        setCourses(coursesData);
-        console.log('coursesData:', coursesData);
+        const departmentsData = await fetchDepartments(facultyId);
+        setDepartments(departmentsData);
+        if (facultyId === 0) {
+          setDepartment(0);
+        } else {
+          setDepartment(departmentsData[0].comboid);
+        }
+        console.log('departmentsData:', departmentsData);
       } catch (error) {
-        console.error('Error fetching courses data:', error);
+        console.error('Error fetching departments data:', error);
       }
     };
-    getData();
-  }, [academicYear, semester, campus, level, faculty, department, courseCode, courseName]);
+    getDepartments(faculty);
+  }, [faculty]);
 
   return (
-    <div className="font-LINESeedSansTH_W_Rg container mx-auto p-4">
+    <div className="">
       <h1 className="text-2xl mb-4">วิชาที่เปิดสอน</h1>
-      <div className="space-y-2">
-        <div>
-          <label className="block mb-2">Academic Year:</label>
-          <select
-            value={academicYear}
-            onChange={(e) => setAcademicYear(Number(e.target.value))}
-            className="p-1 border border-gray-300 rounded"
-          >
-            <option value={2567}>2567</option>
-            <option value={2566}>2566</option>
-            <option value={2565}>2565</option>
-            <option value={2564}>2564</option>
-            <option value={2563}>2563</option>
-            <option value={2562}>2562</option>
-            <option value={2561}>2561</option>
-            <option value={2560}>2560</option>
-          </select>
-        </div>
-        <div>
-          <label className="block mb-2">Semester:</label>
-          <select
-            value={semester}
-            onChange={(e) => setSemester(Number(e.target.value))}
-            className="p-1 border border-gray-300 rounded"
-          >
-            <option value={1}>1</option>
-            <option value={2}>2</option>
-            <option value={3}>3</option>
-          </select>
-        </div>
-        {/* Add other dropdowns similarly for campus, level, faculty, department, course code, and course name */}
-        <div>
-          <label className="block mb-2">Campus:</label>
-          <select
-            value={campus}
-            onChange={(e) => setCampus(Number(e.target.value))}
-            className="p-1 border border-gray-300 rounded"
-          >
-            <option value={10}>10</option>
-            <option value={20}>20</option>
-            <option value={30}>30</option>
-          </select>
-        </div>
-        <div>
-          <label className="block mb-2">Level:</label>
-          <select
-            value={level}
-            onChange={(e) => setLevel(Number(e.target.value))}
-            className="p-1 border border-gray-300 rounded"
-          >
-            <option value={61}>61</option>
-            <option value={62}>62</option>
-            <option value={63}>63</option>
-          </select>
-        </div>
-        <div>
-          <label className="block mb-2">Faculty/College:</label>
-          <select
-            value={faculty}
-            onChange={(e) => setFaculty(Number(e.target.value))}
-            className="p-1 border border-gray-300 rounded"
-          >
-            <option value={3}>3</option>
-            <option value={4}>4</option>
-            <option value={5}>5</option>
-          </select>
-        </div>
-        <div>
-          <label className="block mb-2">Department:</label>
-          <select
-            value={department}
-            onChange={(e) => setDepartment(Number(e.target.value))}
-            className="p-1 border border-gray-300 rounded"
-          >
-            <option value={305}>305</option>
-            <option value={306}>306</option>
-            <option value={307}>307</option>
-          </select>
-        </div>
-        <div>
-          <label className="block mb-2">Course Code:</label>
-          <input
-            type="text"
-            value={courseCode}
-            onChange={(e) => setCourseCode(e.target.value)}
-            className="p-1 border border-gray-300 rounded"
-          />
-        </div>
-        <div>
-          <label className="block mb-2">Course Name:</label>
-          <input
-            type="text"
-            value={courseName}
-            onChange={(e) => setCourseName(e.target.value)}
-            className="p-1 border border-gray-300 rounded"
-          />
+
+      <div className="flex items-center justify-center w-full">
+      {/* Input Section */}
+        <div className="space-y-4 w-full">
+          <div className='flex gap-4'>
+            <div className="flex-col items-center">
+              <label className="block mb-2">ปีการศึกษา</label>
+              <select
+                value={academicYear}
+                onChange={(e) => setAcademicYear(Number(e.target.value))}
+                className="p-1 border border-gray-300 rounded"
+              >
+                <option value={2567}>2567</option>
+                <option value={2566}>2566</option>
+                <option value={2565}>2565</option>
+                <option value={2564}>2564</option>
+                <option value={2563}>2563</option>
+                <option value={2562}>2562</option>
+                <option value={2561}>2561</option>
+                <option value={2560}>2560</option>
+              </select>
+            </div>
+
+            <div className="flex-col items-center">
+              <label className="block mb-2">ภาคเรียน</label>
+              <select
+                value={semester}
+                onChange={(e) => setSemester(Number(e.target.value))}
+                className="p-1 border border-gray-300 rounded"
+              >
+                <option value={1}>เทอม 1</option>
+                <option value={2}>เทอม 2</option>
+                <option value={3}>เทอม 3</option>
+              </select>
+            </div>
+
+            <div className="flex-col items-center">
+              <label className="block mb-2">วิทยาเขต</label>
+              <select
+                value={campus}
+                onChange={(e) => setCampus(Number(e.target.value))}
+                className="p-1 border border-gray-300 rounded"
+              >
+                <option value={10}>10 : มจพ. กรุงเทพฯ</option>
+                <option value={21}>21 : มจพ. วิทยาเขตระยอง</option>
+                <option value={36}>25 : มจพ. วิทยาเขตปราจีนบุรี</option>
+              </select>
+            </div>
+
+            <div className="flex-col items-center">
+              <label className="block mb-2">ระดับ</label>
+              <select
+                value={level}
+                onChange={(e) => setLevel(Number(e.target.value))}
+                className="p-1 border border-gray-300 rounded"
+              >
+                <option value={41}>41 : ประกาศนียบัตรวิชาชีพ</option>
+                <option value={51}>51 : ประกาศนียบัตรวิชาชีพชั้นสูง</option>
+                <option value={61}>61 : ปริญญาตรี 4 ปี / 5 ปี</option>
+                <option value={62}>62 : ปริญญาตรีต่อเนื่อง 2 - 3 ปี</option>
+                <option value={63}>63 : ปริญญาตรีเทียบโอน 2 - 3 ปี</option>
+                <option value={71}>71 : ประกาศนียบัตรบัณฑิต</option>
+                <option value={81}>81 : ปริญญาโท</option>
+                <option value={91}>91 : ปริญญาเอก</option>
+              </select>
+            </div>
+
+            <div className="flex-col items-center">
+              <label className="block mb-2">คณะ/วิทยาลัย</label>
+              <select
+                value={faculty}
+                onChange={(e) => setFaculty(Number(e.target.value))}
+                className="p-1 border border-gray-300 rounded"
+              >
+                <option value={0}>00 : ทุกคณะ</option>
+                <option value={1}>01 : คณะวิศวกรรมศาสตร์</option>
+                <option value={2}>02 : คณะครุศาสตร์อุตสาหกรรม</option>
+                <option value={3}>03 : วิทยาลัยเทคโนโลยีอุตสาหกรรม</option>
+                <option value={4}>04 : คณะวิทยาศาสตร์ประยุกต์</option>
+                <option value={5}>05 : คณะอุตสาหกรรมเกษตรดิจิทัล</option>
+                <option value={6}>06 : คณะเทคโนโลยีและการจัดการอุตสาหกรรม</option>
+                <option value={7}>07 : คณะเทคโนโลยีสารสนเทศและนวัตกรรมดิจิทัล</option>
+                <option value={8}>08 : คณะศิลปศาสตร์ประยุกต์</option>
+                <option value={9}>09 : บัณฑิตวิทยาลัยวิศวกรรมศาสตร์นานาชาติฯ</option>
+                <option value={10}>10 : บัณฑิตวิทยาลัย</option>
+                <option value={11}>11 : คณะสถาปัตยกรรมและการออกแบบ</option>
+                <option value={12}>12 : คณะวิศวกรรมศาสตร์และเทคโนโลยี</option>
+                <option value={13}>13 : คณะวิทยาศาสตร์ พลังงานและสิ่งแวดล้อม</option>
+                <option value={14}>14 : คณะบริหารธุรกิจ</option>
+                <option value={15}>15 : วิทยาลัยนานาชาติ</option>
+                <option value={16}>16 : คณะพัฒนาธุรกิจและอุตสาหกรรม</option>
+                <option value={17}>17 : คณะบริหารธุรกิจและอุตสาหกรรมบริการ</option>
+                <option value={18}>18 : อุทยานเทคโนโลยี มจพ.</option>
+              </select>
+            </div>
+          </div>
+          <div className='flex gap-4'>
+            {departments.length > 0 && (
+              <div className="flex-col items-center">
+                <label className="block mb-2">ภาควิชา</label>
+                <select
+                  value={department}
+                  onChange={(e) => setDepartment(Number(e.target.value))}
+                  className="p-1 border border-gray-300 rounded"
+                >
+                  {departments.map((dep) => (
+                    <option key={dep.comboid} value={dep.comboid}>
+                      {dep.comboshow}
+                    </option>
+                  ))}
+                </select>
+              </div>
+            )}
+
+            <div className="flex-col items-center">
+              <label className="block mb-2">รหัสวิชา</label>
+              <input
+                type="text"
+                value={courseCode}
+                onChange={(e) => setCourseCode(e.target.value)}
+                className="p-1 border border-gray-300 rounded"
+              />
+            </div>
+
+            <div className="flex-col items-center">
+              <label className="block mb-2">ชื่อวิชา</label>
+              <input
+                type="text"
+                value={courseName}
+                onChange={(e) => setCourseName(e.target.value)}
+                className="p-1 border border-gray-300 rounded"
+              />
+            </div>
+
+            <div className="flex items-end">
+              <button
+                onClick={handleFetchData}
+                className="bg-blue-500 hover:bg-blue-700 hover:scale-105 transition-all text-white font-bold py-2 px-6 rounded"
+              >
+                ค้นหา
+              </button>
+            </div>
+          </div>
         </div>
       </div>
-      
+
+      {/* Courses List Section */}
       <div className="mt-4">
-        <div className="space-y-2">
+        { courses.length > 0 && <h2 className="text-xl mb-4">ผลการค้นหา</h2> }
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
           {courses.map((course) => (
-            <div key={course.courseid} className="bg-green-200 p-2 rounded">
-              {course.coursecode} - {course.coursename} ({course.sectioncode})
+            <div key={course.classid} className="bg-green-200 p-4 rounded shadow">
+              <div className="flex flex-col md:flex-row justify-between">
+                <div>
+                  <h2 className="text-lg font-bold">
+                    {course.coursecode} - {course.coursename}
+                  </h2>
+                  <p>Section: {course.sectioncode}</p>
+                  <p>Campus: {course.campusname}</p>
+                  <p>Level: {course.levelname}</p>
+                  <p>Class Set: {course.classsetdes}</p>
+                  <p>Class Status: {course.classstatusdes}</p>
+                  <p>Instructor: {course.classinstructorname}</p>
+                </div>
+                <div>
+                  <p>
+                    <strong>Schedule:</strong> {course.classtime}
+                  </p>
+                  <p>
+                    <strong>Exam:</strong> {course.classexam}
+                  </p>
+                  <p>
+                    <strong>Seats:</strong> {course.enrollseat}/{course.totalseat}
+                  </p>
+                </div>
+              </div>
+              <div>
+                <h3 className="font-semibold mt-2">Instructors:</h3>
+                <ul>
+                  {course.instructor.map((instr: any, idx: number) => (
+                    <li key={idx}>
+                      {instr.prefixname} {instr.officername} {instr.officersurname}
+                    </li>
+                  ))}
+                </ul>
+              </div>
             </div>
           ))}
         </div>
       </div>
     </div>
   );
-};
+}
