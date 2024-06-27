@@ -18,6 +18,7 @@ export default function Courses() {
   const [currentPage, setCurrentPage] = useState<number>(1);
   const [filterText, setFilterText] = useState<string>('');
   const [showAllFiltered, setShowAllFiltered] = useState<boolean>(false);
+  const [selectedData, setSelectedData] = useState<any[]>([]);
 
   const handleFetchData = async () => {
     setLoading(true);
@@ -102,6 +103,21 @@ export default function Courses() {
     course.campusname.toLowerCase().includes(filterText.toLowerCase()) ||
     course.levelname.toLowerCase().includes(filterText.toLowerCase())
   );
+
+  const handleAddSelectRow = (rowData: any) => {
+    // Check for duplicates
+    if (!selectedData.some((data) => data.classid === rowData.classid)) {
+      setSelectedData([...selectedData, rowData]);
+    }
+  };
+
+  const handleRemoveSelectRow = (rowData: any) => {
+    setSelectedData(selectedData.filter((data) => data.classid !== rowData.classid));
+  }
+
+  useEffect(() => {
+    console.log('selectedData:', selectedData);
+  }, [selectedData]);
 
   return (
     <div className="bg-orange-100 p-4 rounded-lg">
@@ -246,7 +262,7 @@ export default function Courses() {
               <button
                 onClick={handleFetchData}
                 disabled={loading}
-                className={`bg-orange-600 hover:bg-red-700 hover:scale-105 transition-all duration-150 text-white font bold py-2 px-6 rounded-lg
+                className={`bg-orange-600 hover:bg-red-700 hover:scale-105 transition-all duration-150 text-white font-bold py-2 px-6 rounded-lg
                 ${loading ? 'opacity-50 cursor-not-allowed' : ''} text-white font-bold py-2 px-6 rounded-lg`}
               >
                 {loading ? 'กำลังค้นหา...' : 'ค้นหา'}
@@ -297,6 +313,9 @@ export default function Courses() {
               <thead className="bg-gray-50">
                 <tr>
                   <th scope="col" className="px-6 py-3 text-left text-md font-LINESeedSansTH_W_Bd text-gray-500 uppercase tracking-wider">
+                    เลือกวิชา
+                  </th>
+                  <th scope="col" className="px-6 py-3 text-left text-md font-LINESeedSansTH_W_Bd text-gray-500 uppercase tracking-wider">
                     รหัสวิชา
                   </th>
                   <th scope="col" className="px-6 py-3 text-left text-md font-LINESeedSansTH_W_Bd text-gray-500 uppercase tracking-wider">
@@ -336,6 +355,24 @@ export default function Courses() {
                 {showAllFiltered ? (
                   filteredCourses.map((course) => (
                       <tr key={course.classid}>
+                        <td className="px-6 py-4 whitespace-nowrap text-sm">
+                          {!selectedData.some((data) => data.classid === course.classid) ? (
+                            <button
+                              onClick={() => handleAddSelectRow(course)}
+                              className="bg-orange-600 hover:bg-red-700 hover:scale-105 transition-all duration-150 text-white py-3 px-4 rounded-lg"
+                            >
+                              เลือก
+                            </button>
+                            ) : (
+                              <button
+                                onClick={() => handleRemoveSelectRow(course)}
+                                className="bg-gray-300 hover:bg-gray-400 hover:scale-105 transition-all duration-150 text-gray-500 font-bold py-3 px-4 rounded-lg"
+                              >
+                                เลือกแล้ว
+                              </button>
+                            )
+                          }
+                        </td>
                         <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">
                           {course.coursecode}
                         </td>
@@ -395,6 +432,24 @@ export default function Courses() {
                 ) : (
                   paginatedCourses.map((course) => (
                       <tr key={course.classid}>
+                        <td className="px-6 py-4 whitespace-nowrap text-sm">
+                          {!selectedData.some((data) => data.classid === course.classid) ? (
+                              <button
+                                onClick={() => handleAddSelectRow(course)}
+                                className="bg-orange-600 hover:bg-red-700 hover:scale-105 transition-all duration-150 text-white py-3 px-4 rounded-lg"
+                              >
+                                เลือก
+                              </button>
+                              ) : (
+                                <button
+                                  onClick={() => handleRemoveSelectRow(course)}
+                                  className="bg-gray-300 hover:bg-gray-400 hover:scale-105 transition-all duration-150 text-gray-500 font-bold py-3 px-4 rounded-lg"
+                                >
+                                  เลือกแล้ว
+                                </button>
+                              )
+                          }
+                        </td>
                         <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">
                           {course.coursecode}
                         </td>
