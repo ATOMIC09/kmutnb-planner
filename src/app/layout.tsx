@@ -7,7 +7,7 @@ import { Analytics } from "@vercel/analytics/react"
 import "./globals.css";
 
 export const metadata: Metadata = {
-  title: "K Planner",
+  title: "KMUTNB Planner",
   description: "Simple course planner before registration for KMUTNB students",
 };
 
