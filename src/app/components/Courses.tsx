@@ -273,7 +273,7 @@ export default function Courses() {
                     value={filterText}
                     onChange={handleFilterTextChange}
                     placeholder='ค้นหาจากผลลัพธ์'
-                    className="p-1 border border-gray-300 rounded-lg"
+                    className="p-1 border border-gray-300 rounded-lg text-sm"
                   />
                 </div>
               </div>
@@ -282,10 +282,10 @@ export default function Courses() {
         </div>
 
         <div>
-          {loading && <div className="pt-8 flex justify-center items-center">กำลังดึงข้อมูล... <IconLoader className="animate-spin" /></div>}
+          {loading && <div className="py-8 flex justify-center items-center">กำลังดึงข้อมูล... <IconLoader className="animate-spin" /></div>}
         </div>
         <div>
-          {courses.length === 0 && !loading && <p className="pt-8 text-center mt-4">ไม่พบข้อมูล :/</p>}
+          {courses.length === 0 && !loading && <p className="py-8 text-center mt-4">ไม่พบข้อมูล 🫤</p>}
         </div>
 
 
@@ -454,6 +454,7 @@ export default function Courses() {
                 )}
               </tbody>
             </table>
+            {filteredCourses.length === 0 && <div className="py-8 text-center mt-4">ไม่เจออะไรเลย พิมพ์ผิดรึเปล่า 🤔</div>}
           </div>
         }
 
