@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { fetchCourses, fetchDepartments } from '../lib/api';
 import { IconLoader } from '@tabler/icons-react';
 
-export default function Courses() {
+export default function Courses({ coursesProp, onSelectedDataChange }: { coursesProp: any, onSelectedDataChange: (data: any[]) => void }) {
   const [courses, setCourses] = useState<any[]>([]);
   const [academicYear, setAcademicYear] = useState<number>(2567);
   const [semester, setSemester] = useState<number>(1);
@@ -116,17 +116,17 @@ export default function Courses() {
   }
 
   useEffect(() => {
-    console.log('selectedData:', selectedData);
-  }, [selectedData]);
+    onSelectedDataChange(selectedData);
+  }, [selectedData, onSelectedDataChange]);
 
   return (
-    <div className="bg-orange-100 p-4 rounded-lg">
+    <div className="bg-orange-100 p-4 rounded-lg mt-4">
       <h1 className="text-2xl mb-4">วิชาที่เปิดสอน</h1>
 
       <div className="flex items-center justify-center w-full">
         {/* Input Section */}
         <div className="space-y-4 w-full">
-          <div className='flex gap-4'>
+          <div className='flex gap-4 flex-col lg:flex-row'>
             <div className="flex-col items-center">
               <label className="block mb-2">ปีการศึกษา</label>
               <select
@@ -218,7 +218,7 @@ export default function Courses() {
               </select>
             </div>
           </div>
-          <div className='flex gap-4'>
+          <div className='flex gap-4 flex-col lg:flex-row'>
             {departments.length > 0 && (
               <div className="flex-col items-center">
                 <label className="block mb-2">ภาควิชา</label>
@@ -262,7 +262,7 @@ export default function Courses() {
               <button
                 onClick={handleFetchData}
                 disabled={loading}
-                className={`bg-orange-600 hover:bg-red-700 hover:scale-105 transition-all duration-150 text-white font-bold py-2 px-6 rounded-lg
+                className={`bg-orange-600 hover:bg-red-700 hover:scale-105 transition-all duration-150 text-white font-bold py-2 md:px-6 w-full rounded-lg
                 ${loading ? 'opacity-50 cursor-not-allowed' : ''} text-white font-bold py-2 px-6 rounded-lg`}
               >
                 {loading ? 'กำลังค้นหา...' : 'ค้นหา'}
@@ -274,10 +274,14 @@ export default function Courses() {
 
       {/* Courses List Section */}
       <div className="mt-4">
-        <div className='flex justify-between items-end'>
-          <div>
-            {courses.length > 0 && !loading && <h2 className="text-xl mb-4">ผลการค้นหา</h2>}
-            {courses.length > 0 && !loading && <p className="text-sm mb-4">ทั้งหมด {courses.length} รายการ</p>}
+        <div className='flex justify-between lg:items-end items-start flex-col sm:flex-row'>
+          <div className='flex flex-row lg:flex-col mb-4 items-end lg:items-start'>
+            <div>
+              {courses.length > 0 && !loading && <h2 className="text-xl">ผลการค้นหา</h2>}
+            </div>
+            <div>
+              {courses.length > 0 && !loading && <p className="text-sm pl-2 lg:pl-0">ทั้งหมด {courses.length} รายการ</p>}
+            </div>
           </div>
           <div>
             {courses.length > 0 && !loading && <div className="flex items-center justify-center w-full">
@@ -289,7 +293,7 @@ export default function Courses() {
                     value={filterText}
                     onChange={handleFilterTextChange}
                     placeholder='ค้นหาจากผลลัพธ์'
-                    className="p-1 border border-gray-300 rounded-lg text-sm"
+                    className="p-1 border border-gray-300 rounded-lg text-sm w-60"
                   />
                 </div>
               </div>

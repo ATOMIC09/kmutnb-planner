@@ -4,7 +4,7 @@ import Image from "next/image";
 
 export default function Home() {
   return (
-    <div className="font-LINESeedSansTH_W_Rg container mx-auto p-4 ">
+    <div className="font-LINESeedSansTH_W_Rg container mx-auto p-8 ">
       <div>
         <div className="flex justify-center items-end gap-2">
           <h1 className="text-2xl mb-4">ไปหน้าอื่น</h1>
