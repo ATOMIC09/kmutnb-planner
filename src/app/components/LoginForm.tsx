@@ -1,6 +1,7 @@
 'use client'
 import React, { useState } from 'react';
 import { userLogin } from '@/app/lib/api';
+import Link from 'next/link';
 
 export function LoginForm() {
   const [username, setUsername] = useState<string>('');
@@ -26,7 +27,7 @@ export function LoginForm() {
   return (
     <div className="flex flex-col items-center justify-center h-screen">
       <form
-        className="bg-orange-50 p-6 rounded-lg shadow-lg w-80"
+        className="bg-white p-6 rounded-lg shadow-lg w-80 border"
         onSubmit={handleSubmit}
       >
         <h2 className="text-4xl mb-2 text-center">เข้าสู่ระบบ</h2>
@@ -64,16 +65,18 @@ export function LoginForm() {
         
         <button
           type="submit"
-          className="w-full bg-blue-500 text-white py-2 rounded-lg hover:bg-blue-600 hover:scale-105 transition-all"
+          className="w-full bg-orange-600 text-white py-2 rounded-lg hover:bg-red-700 hover:scale-105 transition-all"
         >
           ลงชื่อเข้าใช้
         </button>
+        <Link href="/">
+          <div className="text-xs text-center mt-4">
+            กลับหน้าหลัก
+          </div>
+        </Link>
         {error && error.result && <div className="text-red-500 text-sm font-bold mt-4 text-center">เกิดข้อผิดพลาดขึ้น!</div>}
         {error && error.result && <div className="text-red-500 text-sm text-center">{error.result}</div>}
       </form>
-      <div className="text-center mt-12 text-sm text-gray-600">
-        นี่คือเว็บที่ใช้สำหรับการจัดตารางเรียนเท่านั้น <b>มิใช่เว็บไซต์อย่างเป็นทางการของมหาวิทยาลัย</b> <br/>และ<u>ไม่มี</u>การเปลี่ยนแปลงข้อมูลในระบบสารสนเทศเพื่องานทะเบียนนักศึกษา รวมถึง<u>ไม่มี</u>การเก็บข้อมูลของผู้ใช้งาน
-      </div>
     </div>
   );
 };

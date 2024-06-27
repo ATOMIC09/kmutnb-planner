@@ -198,7 +198,7 @@ export default function Courses() {
               <button
                 onClick={handleFetchData}
                 disabled={loading} // Disable button when loading
-                className={`bg-orange-500 hover:bg-orange-700 hover:scale-105 transition-all duration-150 text-white font bold py-2 px-6 rounded-lg
+                className={`bg-orange-600 hover:bg-red-700 hover:scale-105 transition-all duration-150 text-white font bold py-2 px-6 rounded-lg
                 ${loading ? 'opacity-50 cursor-not-allowed' : ''} text-white font-bold py-2 px-6 rounded-lg`}
               >
                 {loading ? 'กำลังค้นหา...' : 'ค้นหา'}

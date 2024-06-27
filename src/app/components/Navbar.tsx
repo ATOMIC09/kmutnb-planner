@@ -4,6 +4,7 @@ import Image from 'next/image';
 import { userLogout } from '../lib/api';
 import { useRouter } from 'next/navigation'
 import { getUserInfo } from '@/app/lib/api';
+import Link from 'next/link';
 
 export default function Navbar() {
   const router = useRouter()
@@ -26,8 +27,10 @@ export default function Navbar() {
   }
 
   return (
-    <nav className="font-LINESeedSansTH_W_Rg p-2 flex text-lg justify-between items-center bg-orange-600 shadow-lg">
-      <Image src="/LOGO_Placeholder.png" alt="logo" width={50} height={50} />
+    <nav className="font-LINESeedSansTH_W_Rg p-2 flex text-lg justify-between items-center bg-orange-500 shadow-lg">
+      <Link href="/">
+        <Image src="/LOGO_Placeholder.png" alt="logo" width={50} height={50} />
+      </Link>
       <div className='flex px-4 gap-4 items-center'>
         {payload?.username && <div className="text-white">สวัสดี! {payload?.username}</div>}
         {payload?.username && <button onClick={handleLogout} className="text-white bg-orange-700 hover:bg-red-900 rounded-md px-4 py-1 hover:scale-105 transition-all">ออกจากระบบ</button>}
