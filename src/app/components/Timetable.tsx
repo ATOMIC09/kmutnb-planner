@@ -1,25 +1,33 @@
 import React, { useEffect, useState } from 'react';
 import { fetchTimetable, fetchTimetableSub } from '../lib/api';
+import { useRouter } from 'next/navigation';
 
 const Timetable: React.FC = () => {
+  const router = useRouter();
   const [year, setYear] = useState(2567);
   const [semester, setSemester] = useState(1);
-  const [startDate, setStartDate] = useState('2024-06-23');
+  const [startDate, setStartDate] = useState('2024');
   const [endDate, setEndDate] = useState('2024-06-29');
   const [timetable, setTimetable] = useState<any[]>([]);
   const [timetableSub, setTimetableSub] = useState<any[]>([]);
 
   useEffect(() => {
     const getData = async () => {
-      try {
-        const timetableData = await fetchTimetable(year, semester);
-        const timetableSubData = await fetchTimetableSub(year, semester, startDate, endDate);
-        setTimetable(timetableData);
-        setTimetableSub(timetableSubData);
+      const timetableData = await fetchTimetable(year, semester);
+      const timetableSubData = await fetchTimetableSub(year, semester, startDate, endDate);
+      if (timetableData.status !== 200 || timetableSubData.status !== 200) {
+        console.error('Error fetching timetable data:', timetableData.status, timetableSubData.status);
+        if (timetableData.status === 500 || timetableSubData.status === 500) {
+          router.push('/login');
+        }
+
+        return;
+      }
+      else {
+        setTimetable(timetableData.data);
+        setTimetableSub(timetableSubData.data);
         console.log('timetableData:', timetableData);
         console.log('timetableSubData:', timetableSubData);
-      } catch (error) {
-        console.error('Error fetching timetable data:', error);
       }
     };
     getData();
@@ -32,7 +40,7 @@ const Timetable: React.FC = () => {
     <div className="container mx-auto p-4">
       <div className="mb-4 flex space-x-4">
         <div>
-          <label className="block mb-2">Year:</label>
+          <label className="block mb-2">ปีการศึกษา</label>
           <select value={year} onChange={(e) => setYear(Number(e.target.value))} className="p-1 border border-gray-300 rounded">
             <option value={2567}>2567</option>
             <option value={2566}>2566</option>
@@ -45,7 +53,7 @@ const Timetable: React.FC = () => {
           </select>
         </div>
         <div>
-          <label className="block mb-2">Semester:</label>
+          <label className="block mb-2">ภาคเรียน</label>
           <select value={semester} onChange={(e) => setSemester(Number(e.target.value))} className="p-1 border border-gray-300 rounded">
             <option value={1}>1</option>
             <option value={2}>2</option>
@@ -53,11 +61,11 @@ const Timetable: React.FC = () => {
           </select>
         </div>
         <div>
-          <label className="block mb-2">Start Date:</label>
+          <label className="block mb-2">วันที่เริ่มต้น</label>
           <input type="date" value={startDate} onChange={(e) => setStartDate(e.target.value)} className="p-1 border border-gray-300 rounded" />
         </div>
         <div>
-          <label className="block mb-2">End Date:</label>
+          <label className="block mb-2">วันที่สิ้นสุด</label>
           <input type="date" value={endDate} onChange={(e) => setEndDate(e.target.value)} className="p-1 border border-gray-300 rounded" />
         </div>
       </div>
@@ -95,7 +103,7 @@ const Timetable: React.FC = () => {
       </div>
 
       <div className="mt-4">
-        <h2 className="text-xl mb-2">Subjects</h2>
+        <h2 className="text-xl mb-2">รายวิชา</h2>
         <div className="space-y-2">
           {timetable.map((subject) => (
             <div key={subject.courseid} className="bg-green-200 p-2 rounded">

@@ -5,18 +5,18 @@ class Encryptor {
   private AESkey: string;
 
   constructor() {
-    this.encryptSecretKey = "mySecretKeyHere",
-    this.AESkey = "sQeWwhHUKB3VTrwXijHsufC1S2l19upM"
+    this.encryptSecretKey = "mySecretKeyHere";
+    this.AESkey = "sQeWwhHUKB3VTrwXijHsufC1S2l19upM";
   }
 
   encryptData(data: string): string {
-    const salt = CryptoJS.lib.WordArray.random(16),
-    key = CryptoJS.PBKDF2(this.encryptSecretKey, salt, {
+    const salt = CryptoJS.lib.WordArray.random(16);
+    const key = CryptoJS.PBKDF2(this.encryptSecretKey, salt, {
       keySize: 8,
       iterations: 100,
     });
-    const R = CryptoJS.lib.WordArray.random(16),
-    V = CryptoJS.AES.encrypt(data, key, {
+    const R = CryptoJS.lib.WordArray.random(16);
+    const V = CryptoJS.AES.encrypt(data, key, {
       iv: R,
       padding: CryptoJS.pad.Pkcs7,
       mode: CryptoJS.mode.CBC,

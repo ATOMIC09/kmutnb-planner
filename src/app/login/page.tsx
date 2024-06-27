@@ -1,14 +1,10 @@
 import React from 'react';
-import Navbar from '../components/Navbar';
 import LoginForm from '../components/LoginForm';
 
-export default function LoginPage() {
-  // Replace 'Guest' with the actual username after login
-  const username = 'Guest';
 
+export default function LoginPage() {
   return (
-    <div className='font-LINESeedSansTH_W_Rg'>
-      <Navbar username={username} />
+    <div className='font-LINESeedSansTH_W_Rg bg-orange-50'>
       <LoginForm />
     </div>
   );
