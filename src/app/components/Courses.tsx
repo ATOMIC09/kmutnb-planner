@@ -13,10 +13,14 @@ export default function Courses() {
   const [departments, setDepartments] = useState<any[]>([]);
   const [courseCode, setCourseCode] = useState<string>('');
   const [courseName, setCourseName] = useState<string>('');
-  const [loading, setLoading] = useState<boolean>(false); // State for loading indicator
+  const [loading, setLoading] = useState<boolean>(false);
+  const [pageSize, setPageSize] = useState<number>(10);
+  const [currentPage, setCurrentPage] = useState<number>(1);
+  const [filterText, setFilterText] = useState<string>('');
+  const [showAllFiltered, setShowAllFiltered] = useState<boolean>(false);
 
   const handleFetchData = async () => {
-    setLoading(true); // Set loading state to true on button click
+    setLoading(true);
     try {
       const coursesData = await fetchCourses(
         academicYear,
@@ -33,7 +37,7 @@ export default function Courses() {
     } catch (error) {
       console.error('Error fetching courses data:', error);
     } finally {
-      setLoading(false); // Set loading state to false after data fetching completes
+      setLoading(false);
     }
   };
 
@@ -54,7 +58,51 @@ export default function Courses() {
     };
     getDepartments(faculty);
   }, [faculty]);
-  
+
+  const handlePageChange = (page: number) => {
+    setCurrentPage(page);
+  };
+
+  // Adjusted handlePageSizeChange function to toggle showAllFiltered state
+  const handlePageSizeChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
+    const size = Number(e.target.value);
+    setPageSize(size);
+    if (size === courses.length) {
+      setShowAllFiltered(true);
+    } else {
+      setShowAllFiltered(false);
+      setCurrentPage(1);
+    }
+  };
+
+  const handleFilterTextChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setFilterText(e.target.value);
+    setPageSize(courses.length);
+    console.log('filterText:', e.target.value);
+    if (e.target.value === '') {
+      setPageSize(10);
+      setShowAllFiltered(false);
+      setCurrentPage(1);
+    }
+    else {
+      setShowAllFiltered(true);
+    }
+  };
+
+  const paginatedCourses = courses.slice((currentPage - 1) * pageSize, currentPage * pageSize);
+  const filteredCourses = paginatedCourses.filter((course) =>
+    course.coursename.toLowerCase().includes(filterText.toLowerCase()) ||
+    course.coursecode.toLowerCase().includes(filterText.toLowerCase()) ||
+    course.sectioncode.toLowerCase().includes(filterText.toLowerCase()) ||
+    course.classinstructorname.toLowerCase().includes(filterText.toLowerCase()) ||
+    course.classtime.toLowerCase().includes(filterText.toLowerCase()) ||
+    course.classexam.toLowerCase().includes(filterText.toLowerCase()) ||
+    course.classsetdes.toLowerCase().includes(filterText.toLowerCase()) ||
+    course.classstatusdes.toLowerCase().includes(filterText.toLowerCase()) ||
+    course.campusname.toLowerCase().includes(filterText.toLowerCase()) ||
+    course.levelname.toLowerCase().includes(filterText.toLowerCase())
+  );
+
   return (
     <div className="bg-orange-100 p-4 rounded-lg">
       <h1 className="text-2xl mb-4">วิชาที่เปิดสอน</h1>
@@ -197,7 +245,7 @@ export default function Courses() {
             <div className="flex items-end">
               <button
                 onClick={handleFetchData}
-                disabled={loading} // Disable button when loading
+                disabled={loading}
                 className={`bg-orange-600 hover:bg-red-700 hover:scale-105 transition-all duration-150 text-white font bold py-2 px-6 rounded-lg
                 ${loading ? 'opacity-50 cursor-not-allowed' : ''} text-white font-bold py-2 px-6 rounded-lg`}
               >
@@ -210,57 +258,238 @@ export default function Courses() {
 
       {/* Courses List Section */}
       <div className="mt-4">
-        <span className=''>
-          { courses.length > 0 && !loading && <h2 className="text-xl mb-4">ผลการค้นหา</h2> }
-          { courses.length > 0 && !loading && <p className="text-sm mb-4">ทั้งหมด {courses.length} รายการ</p> }
-        </span>
+        <div className='flex justify-between items-end'>
+          <div>
+            {courses.length > 0 && !loading && <h2 className="text-xl mb-4">ผลการค้นหา</h2>}
+            {courses.length > 0 && !loading && <p className="text-sm mb-4">ทั้งหมด {courses.length} รายการ</p>}
+          </div>
+          <div>
+            {courses.length > 0 && !loading && <div className="flex items-center justify-center w-full">
+              <div className='flex gap-4 mb-4'>
+                {/* Text filter input */}
+                <div className="flex-col items-center">
+                  <input
+                    type="text"
+                    value={filterText}
+                    onChange={handleFilterTextChange}
+                    placeholder='ค้นหาจากผลลัพธ์'
+                    className="p-1 border border-gray-300 rounded-lg"
+                  />
+                </div>
+              </div>
+            </div>}
+          </div>
+        </div>
+
         <div>
           {loading && <div className="pt-8 flex justify-center items-center">กำลังดึงข้อมูล... <IconLoader className="animate-spin" /></div>}
         </div>
+        <div>
+          {courses.length === 0 && !loading && <p className="pt-8 text-center mt-4">ไม่พบข้อมูล :/</p>}
+        </div>
 
-        { courses.length > 0 && !loading && 
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-            {courses.map((course) => (
-              <div key={course.classid} className="bg-orange-200 p-4 rounded-lg shadow">
-                <div className="flex flex-col md:flex-row justify-between">
-                  <div>
-                    <h2 className="text-lg font-bold">
-                      {course.coursecode} - {course.coursename}
-                    </h2>
-                    <p>Section: {course.sectioncode}</p>
-                    <p>Campus: {course.campusname}</p>
-                    <p>Level: {course.levelname}</p>
-                    <p>Class Set: {course.classsetdes}</p>
-                    <p>Class Status: {course.classstatusdes}</p>
-                    <p>Instructor: {course.classinstructorname}</p>
-                  </div>
-                  <div>
-                    <p>
-                      <strong>Schedule:</strong> {course.classtime}
-                    </p>
-                    <p>
-                      <strong>Exam:</strong> {course.classexam}
-                    </p>
-                    <p>
-                      <strong>Seats:</strong> {course.enrollseat}/{course.totalseat}
-                    </p>
-                  </div>
-                </div>
-                <div>
-                  <h3 className="font-semibold mt-2">Instructors:</h3>
-                  <ul>
-                    {course.instructor.map((instr: any, idx: number) => (
-                      <li key={idx}>
-                        {instr.prefixname} {instr.officername} {instr.officersurname}
-                      </li>
-                    ))}
-                  </ul>
-                </div>
-              </div>
-            ))}
+
+
+        {/* Courses Table */}
+        {courses.length > 0 && !loading &&
+          <div className="overflow-x-auto">
+            <table className="min-w-full divide-y divide-gray-200">
+              <thead className="bg-gray-50">
+                <tr>
+                  <th scope="col" className="px-6 py-3 text-left text-md font-LINESeedSansTH_W_Bd text-gray-500 uppercase tracking-wider">
+                    รหัสวิชา
+                  </th>
+                  <th scope="col" className="px-6 py-3 text-left text-md font-LINESeedSansTH_W_Bd text-gray-500 uppercase tracking-wider">
+                    ชื่อวิชา
+                  </th>
+                  <th scope="col" className="px-6 py-3 text-left text-md font-LINESeedSansTH_W_Bd text-gray-500 uppercase tracking-wider">
+                    ตอนเรียน
+                  </th>
+                  <th scope="col" className="px-6 py-3 text-left text-md font-LINESeedSansTH_W_Bd text-gray-500 uppercase tracking-wider">
+                    จำนวนที่นั่ง
+                  </th>
+                  <th scope="col" className="px-6 py-3 text-left text-md font-LINESeedSansTH_W_Bd text-gray-500 uppercase tracking-wider">
+                    วันเวลาเรียน
+                  </th>
+                  <th scope="col" className="px-6 py-3 text-left text-md font-LINESeedSansTH_W_Bd text-gray-500 uppercase tracking-wider">
+                    วันเวลาสอบ
+                  </th>
+                  <th scope="col" className="px-6 py-3 text-left text-md font-LINESeedSansTH_W_Bd text-gray-500 uppercase tracking-wider">
+                    ผู้สอน
+                  </th>
+                  <th scope="col" className="px-6 py-3 text-left text-md font-LINESeedSansTH_W_Bd text-gray-500 uppercase tracking-wider">
+                    วิทยาเขต
+                  </th>
+                  <th scope="col" className="px-6 py-3 text-left text-md font-LINESeedSansTH_W_Bd text-gray-500 uppercase tracking-wider">
+                    ระดับ
+                  </th>
+                  <th scope="col" className="px-6 py-3 text-left text-md font-LINESeedSansTH_W_Bd text-gray-500 uppercase tracking-wider">
+                    กลุ่มเรียน
+                  </th>
+                  <th scope="col" className="px-6 py-3 text-left text-md font-LINESeedSansTH_W_Bd text-gray-500 uppercase tracking-wider">
+                    สถานะรายวิชา
+                  </th>
+                </tr>
+              </thead>
+
+              <tbody className="bg-white divide-y divide-gray-200">
+                {showAllFiltered ? (
+                  filteredCourses.map((course) => (
+                      <tr key={course.classid}>
+                        <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">
+                          {course.coursecode}
+                        </td>
+                        <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                          {course.coursename}
+                        </td>
+                        <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                          {course.sectioncode}
+                        </td>
+                        <td className={`px-6 py-4 whitespace-nowrap text-sm font-LINESeedSansTH_W_Bd ${(course.enrollseat / course.totalseat) < 0.5
+                          ? 'text-green-500'
+                          : (course.enrollseat / course.totalseat) < 0.8
+                            ? 'text-yellow-500'
+                            : (course.enrollseat / course.totalseat) < 1
+                              ? 'text-orange-600'
+                              : 'text-red-900'
+                          }`}
+                        >
+                          <div className='flex flex-col items-center'>
+                            <div>
+                              {course.enrollseat}/{course.totalseat}
+                            </div>
+                            <div>
+                              {`${(course.enrollseat / course.totalseat) === 1 ? '(เต็ม)' : ''}`}
+                            </div>
+                          </div>
+                        </td>
+                        <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                          {course.classtime.split('<br>').map((schedule: string, index: number) => (
+                            <p key={index}>{schedule.includes('ห้อง') ? `• ${schedule}` : schedule}</p>
+                          ))}
+                        </td>
+                        <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                          {course.classexam.split('<br>').map((schedule: string, index: number) => (
+                            <p key={index}>{schedule}</p>
+                          ))}
+                        </td>
+                        <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                          {course.classinstructorname.split('<LI>').map((instructor: string, index: number) => (
+                            <p key={index}>{instructor}</p>
+                          ))}
+                        </td>
+                        <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                          {course.campusname}
+                        </td>
+                        <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                          {course.levelname}
+                        </td>
+                        <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                          {course.classsetdes}
+                        </td>
+                        <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                          {course.classstatusdes}
+                        </td>
+                      </tr>
+                    ))
+                ) : (
+                  paginatedCourses.map((course) => (
+                      <tr key={course.classid}>
+                        <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">
+                          {course.coursecode}
+                        </td>
+                        <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                          {course.coursename}
+                        </td>
+                        <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                          {course.sectioncode}
+                        </td>
+                        <td className={`px-6 py-4 whitespace-nowrap text-sm font-LINESeedSansTH_W_Bd ${(course.enrollseat / course.totalseat) < 0.5
+                          ? 'text-green-500'
+                          : (course.enrollseat / course.totalseat) < 0.8
+                            ? 'text-yellow-500'
+                            : (course.enrollseat / course.totalseat) < 1
+                              ? 'text-orange-600'
+                              : 'text-red-900'
+                          }`}
+                        >
+                          <div className='flex flex-col items-center'>
+                            <div>
+                              {course.enrollseat}/{course.totalseat}
+                            </div>
+                            <div>
+                              {`${(course.enrollseat / course.totalseat) === 1 ? '(เต็ม)' : ''}`}
+                            </div>
+                          </div>
+                        </td>
+                        <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                          {course.classtime.split('<br>').map((schedule: string, index: number) => (
+                            <p key={index}>{schedule.includes('ห้อง') ? `• ${schedule}` : schedule}</p>
+                          ))}
+                        </td>
+                        <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                          {course.classexam.split('<br>').map((schedule: string, index: number) => (
+                            <p key={index}>{schedule}</p>
+                          ))}
+                        </td>
+                        <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                          {course.classinstructorname.split('<LI>').map((instructor: string, index: number) => (
+                            <p key={index}>{instructor}</p>
+                          ))}
+                        </td>
+                        <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                          {course.campusname}
+                        </td>
+                        <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                          {course.levelname}
+                        </td>
+                        <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                          {course.classsetdes}
+                        </td>
+                        <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                          {course.classstatusdes}
+                        </td>
+                      </tr>
+                    ))
+                )}
+              </tbody>
+            </table>
           </div>
         }
-        </div>
+
+        {/* Pagination Controls */}
+        {courses.length > 0 && !loading && !showAllFiltered && (
+          <div className="flex justify-between items-center mt-4">
+            <div>
+              <label className="mr-2">แสดง</label>
+              <select value={pageSize} onChange={handlePageSizeChange} className="p-1 border border-gray-300 rounded-lg">
+                <option value={10}>10</option>
+                <option value={30}>30</option>
+                <option value={50}>50</option>
+                <option value={courses.length}>แสดงทั้งหมด</option>
+              </select>
+              <span className="ml-2">รายการ</span>
+            </div>
+            <div>
+              <button
+                onClick={() => handlePageChange(currentPage - 1)}
+                disabled={currentPage === 1}
+                className="px-3 py-1 border border-gray-300 rounded-lg mr-2 disabled:opacity-50 disabled:cursor-not-allowed"
+              >
+                ก่อนหน้า
+              </button>
+              <span>หน้า {currentPage} / {Math.ceil(courses.length / pageSize)}</span>
+              <button
+                onClick={() => handlePageChange(currentPage + 1)}
+                disabled={currentPage === Math.ceil(courses.length / pageSize)}
+                className="px-3 py-1 border border-gray-300 rounded-lg ml-2 disabled:opacity-50 disabled:cursor-not-allowed"
+              >
+                ถัดไป
+              </button>
+            </div>
+          </div>
+        )}
       </div>
+    </div>
   );
 }
