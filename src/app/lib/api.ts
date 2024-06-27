@@ -1,6 +1,6 @@
 import axios from 'axios';
 import { gunzipSync } from 'zlib';
-import { TOKEN_API_URL, TIMETABLE_API_URL, CLASSINFO_API_URL, LOGIN_API_URL } from '@/config';
+import { TOKEN_API_URL, TIMETABLE_API_URL, CLASSINFO_API_URL, LOGIN_API_URL, DEPARTMENT_API_URL } from '@/config';
 import Encryptor from '@/app/lib/encryption';
 import { jwtDecode } from "jwt-decode";
 
@@ -191,7 +191,7 @@ export const getUserInfo = async () => {
 
 export const fetchDepartments = async (facultyId: number) => {
   const authHeader = await getAuthHeader();
-  const url = `https://reg.kmutnb.ac.th/regapiweb2/api/th/ComboDep/All/${facultyId}`;
+  const url = `${DEPARTMENT_API_URL}/${facultyId}`;
   const res = await axiosInstance.get(url, authHeader);
   return decodeBase64Response(res.data.result);
 };
