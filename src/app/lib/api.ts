@@ -164,7 +164,7 @@ const getTokenTime = (): number => {
 
 const fetchNewToken = async (): Promise<string> => {
   const res = await axios.get(TOKEN_API_URL);
-  console.log('New token:', res.data.token);
+  // console.log('New token:', res.data.token);
   const token = res.data.token;
   setStorage('tokenweb', token);
   setStorage('tokentime', Math.floor(Date.now() / 1000)); // Store current time in seconds

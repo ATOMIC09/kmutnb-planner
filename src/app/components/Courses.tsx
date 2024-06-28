@@ -3,7 +3,7 @@ import { fetchCourses, fetchDepartments } from '../lib/api';
 import { IconLoader } from '@tabler/icons-react';
 import parseClassInformation from '../lib/extractClassInformation';
 
-export default function Courses({ coursesProp, onSelectedDataChange, errorProp }: { coursesProp: any, onSelectedDataChange: (data: any[]) => void, errorProp: any }) {
+export default function Courses({ coursesProp, onSelectedDataChange }: { coursesProp: any, onSelectedDataChange: (data: any[]) => void }) {
   const [courses, setCourses] = useState<any[]>([]);
   const [academicYear, setAcademicYear] = useState<number>(2567);
   const [semester, setSemester] = useState<number>(1);
@@ -20,8 +20,14 @@ export default function Courses({ coursesProp, onSelectedDataChange, errorProp }
   const [filterText, setFilterText] = useState<string>('');
   const [showAllFiltered, setShowAllFiltered] = useState<boolean>(false);
   const [selectedData, setSelectedData] = useState<any[]>([]);
+  const [conflictError, setConflictError] = useState<any[]>([]);
 
   const handleFetchData = async () => {
+    // Reset search filter
+    setFilterText('');
+    setPageSize(10);
+    setShowAllFiltered(false);
+    setCurrentPage(1);
     setLoading(true);
     try {
       const coursesData = await fetchCourses(
@@ -35,7 +41,7 @@ export default function Courses({ coursesProp, onSelectedDataChange, errorProp }
         courseName
       );
       setCourses(coursesData);
-      console.log('coursesData:', coursesData);
+      // console.log('coursesData:', coursesData);
     } catch (error) {
       console.error('Error fetching courses data:', error);
     } finally {
@@ -53,7 +59,7 @@ export default function Courses({ coursesProp, onSelectedDataChange, errorProp }
         } else {
           setDepartment(departmentsData[0].comboid);
         }
-        console.log('departmentsData:', departmentsData);
+        // console.log('departmentsData:', departmentsData);
       } catch (error) {
         console.error('Error fetching departments data:', error);
       }
@@ -80,7 +86,7 @@ export default function Courses({ coursesProp, onSelectedDataChange, errorProp }
   const handleFilterTextChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setFilterText(e.target.value);
     setPageSize(courses.length);
-    console.log('filterText:', e.target.value);
+    // console.log('filterText:', e.target.value);
     if (e.target.value === '') {
       setPageSize(10);
       setShowAllFiltered(false);
@@ -106,11 +112,12 @@ export default function Courses({ coursesProp, onSelectedDataChange, errorProp }
   );
 
   const handleAddSelectRow = (rowData: any) => {
+    setConflictError([]);
     // Check for duplicates
     if (!selectedData.some((data) => data.classid === rowData.classid)) {
       // Extract class information
       const classInfo = parseClassInformation(rowData);
-      
+
       // Check for classtime conflicts
       const selectedClassTimes = selectedData.map((data) => parseClassInformation(data));
       const newClassTimes = classInfo;
@@ -145,7 +152,7 @@ export default function Courses({ coursesProp, onSelectedDataChange, errorProp }
             conflictwith: conflictingSchedules
           };
         });
-        errorProp(conflictingTimes);
+        setConflictError(findConflictErrorProp(conflictingTimes));
         return;
       }
       setSelectedData([...selectedData, rowData]);
@@ -153,12 +160,22 @@ export default function Courses({ coursesProp, onSelectedDataChange, errorProp }
   };
 
   const handleRemoveSelectRow = (rowData: any) => {
+    setConflictError([]);
     setSelectedData(selectedData.filter((data) => data.classid !== rowData.classid));
+  }
+
+  const findConflictErrorProp = (errorProp: any) => {
+    const error = errorProp.find((error: any) => error.conflictwith.length > 0);
+    return error.conflictwith;
   }
 
   useEffect(() => {
     onSelectedDataChange(selectedData);
   }, [selectedData, onSelectedDataChange]);
+
+  useEffect(() => {
+    // console.log('Conflict Error:', conflictError);
+  }, [conflictError]);
 
   return (
     <div className="bg-orange-100 p-4 rounded-lg mt-4 mb-4">
@@ -399,158 +416,158 @@ export default function Courses({ coursesProp, onSelectedDataChange, errorProp }
               <tbody className="bg-white divide-y divide-gray-200">
                 {showAllFiltered ? (
                   filteredCourses.map((course) => (
-                      <tr key={course.classid}>
-                        <td className="px-6 py-4 whitespace-nowrap text-sm">
-                          {!selectedData.some((data) => data.classid === course.classid) ? (
-                            <button
-                              onClick={() => handleAddSelectRow(course)}
-                              className="bg-orange-600 hover:bg-red-700 hover:scale-105 transition-all duration-150 text-white py-3 px-4 rounded-lg"
-                            >
-                              เลือก
-                            </button>
-                            ) : (
-                              <button
-                                onClick={() => handleRemoveSelectRow(course)}
-                                className="bg-gray-300 hover:bg-gray-400 hover:scale-105 transition-all duration-150 text-gray-500 font-bold py-3 px-4 rounded-lg"
-                              >
-                                เลือกแล้ว
-                              </button>
-                            )
-                          }
-                        </td>
-                        <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">
-                          {course.coursecode}
-                        </td>
-                        <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                          {course.coursename}
-                        </td>
-                        <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                          {course.sectioncode}
-                        </td>
-                        <td className={`px-6 py-4 whitespace-nowrap text-sm font-LINESeedSansTH_W_Bd ${(course.enrollseat / course.totalseat) < 0.5
-                          ? 'text-green-500'
-                          : (course.enrollseat / course.totalseat) < 0.8
-                            ? 'text-yellow-500'
-                            : (course.enrollseat / course.totalseat) < 1
-                              ? 'text-orange-600'
-                              : 'text-red-900'
-                          }`}
-                        >
-                          <div className='flex flex-col items-center'>
-                            <div>
-                              {course.enrollseat}/{course.totalseat}
-                            </div>
-                            <div>
-                              {`${(course.enrollseat / course.totalseat) === 1 ? '(เต็ม)' : ''}`}
-                            </div>
+                    <tr key={course.classid} className={`${conflictError.some((error: any) => error.coursecode === course.coursecode) ? 'bg-red-200' : ''}`} >
+                      <td className="px-6 py-4 whitespace-nowrap text-sm">
+                        {!selectedData.some((data) => data.classid === course.classid) ? (
+                          <button
+                            onClick={() => handleAddSelectRow(course)}
+                            className="bg-orange-600 hover:bg-red-700 hover:scale-105 transition-all duration-150 text-white py-3 px-4 rounded-lg"
+                          >
+                            เลือก
+                          </button>
+                        ) : (
+                          <button
+                            onClick={() => handleRemoveSelectRow(course)}
+                            className="bg-gray-300 hover:bg-gray-400 hover:scale-105 transition-all duration-150 text-gray-500 font-bold py-3 px-4 rounded-lg"
+                          >
+                            เลือกแล้ว
+                          </button>
+                        )
+                        }
+                      </td>
+                      <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">
+                        {course.coursecode}
+                      </td>
+                      <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                        {course.coursename}
+                      </td>
+                      <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                        {course.sectioncode}
+                      </td>
+                      <td className={`px-6 py-4 whitespace-nowrap text-sm font-LINESeedSansTH_W_Bd ${(course.enrollseat / course.totalseat) < 0.5
+                        ? 'text-green-500'
+                        : (course.enrollseat / course.totalseat) < 0.8
+                          ? 'text-yellow-500'
+                          : (course.enrollseat / course.totalseat) < 1
+                            ? 'text-orange-600'
+                            : 'text-red-900'
+                        }`}
+                      >
+                        <div className='flex flex-col items-center'>
+                          <div>
+                            {course.enrollseat}/{course.totalseat}
                           </div>
-                        </td>
-                        <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                          {course.classtime.split('<br>').map((schedule: string, index: number) => (
-                            <p key={index}>{schedule.includes('ห้อง') ? `• ${schedule}` : schedule}</p>
-                          ))}
-                        </td>
-                        <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                          {course.classexam.split('<br>').map((schedule: string, index: number) => (
-                            <p key={index}>{schedule}</p>
-                          ))}
-                        </td>
-                        <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                          {course.classinstructorname.split('<LI>').map((instructor: string, index: number) => (
-                            <p key={index}>{instructor}</p>
-                          ))}
-                        </td>
-                        <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                          {course.campusname}
-                        </td>
-                        <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                          {course.levelname}
-                        </td>
-                        <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                          {course.classsetdes}
-                        </td>
-                        <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                          {course.classstatusdes}
-                        </td>
-                      </tr>
-                    ))
+                          <div>
+                            {`${(course.enrollseat / course.totalseat) === 1 ? '(เต็ม)' : ''}`}
+                          </div>
+                        </div>
+                      </td>
+                      <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                        {course.classtime.split('<br>').map((schedule: string, index: number) => (
+                          <p className={`${conflictError.some((error: any) => error.coursecode === course.coursecode) ? 'text-red-500' : ''}`} key={index}>{schedule.includes('ห้อง') ? `• ${schedule}` : schedule}</p>
+                        ))}
+                      </td>
+                      <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                        {course.classexam.split('<br>').map((schedule: string, index: number) => (
+                          <p key={index}>{schedule}</p>
+                        ))}
+                      </td>
+                      <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                        {course.classinstructorname.split('<LI>').map((instructor: string, index: number) => (
+                          <p key={index}>{instructor}</p>
+                        ))}
+                      </td>
+                      <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                        {course.campusname}
+                      </td>
+                      <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                        {course.levelname}
+                      </td>
+                      <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                        {course.classsetdes}
+                      </td>
+                      <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                        {course.classstatusdes}
+                      </td>
+                    </tr>
+                  ))
                 ) : (
                   paginatedCourses.map((course) => (
-                      <tr key={course.classid}>
-                        <td className="px-6 py-4 whitespace-nowrap text-sm">
-                          {!selectedData.some((data) => data.classid === course.classid) ? (
-                              <button
-                                onClick={() => handleAddSelectRow(course)}
-                                className="bg-orange-600 hover:bg-red-700 hover:scale-105 transition-all duration-150 text-white py-3 px-4 rounded-lg"
-                              >
-                                เลือก
-                              </button>
-                              ) : (
-                                <button
-                                  onClick={() => handleRemoveSelectRow(course)}
-                                  className="bg-gray-300 hover:bg-gray-400 hover:scale-105 transition-all duration-150 text-gray-500 font-bold py-3 px-4 rounded-lg"
-                                >
-                                  เลือกแล้ว
-                                </button>
-                              )
-                          }
-                        </td>
-                        <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">
-                          {course.coursecode}
-                        </td>
-                        <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                          {course.coursename}
-                        </td>
-                        <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                          {course.sectioncode}
-                        </td>
-                        <td className={`px-6 py-4 whitespace-nowrap text-sm font-LINESeedSansTH_W_Bd ${(course.enrollseat / course.totalseat) < 0.5
-                          ? 'text-green-500'
-                          : (course.enrollseat / course.totalseat) < 0.8
-                            ? 'text-yellow-500'
-                            : (course.enrollseat / course.totalseat) < 1
-                              ? 'text-orange-600'
-                              : 'text-red-900'
-                          }`}
-                        >
-                          <div className='flex flex-col items-center'>
-                            <div>
-                              {course.enrollseat}/{course.totalseat}
-                            </div>
-                            <div>
-                              {`${(course.enrollseat / course.totalseat) === 1 ? '(เต็ม)' : ''}`}
-                            </div>
+                    <tr key={course.classid} className={`${conflictError.some((error: any) => error.coursecode === course.coursecode) ? 'bg-red-200' : ''}`}>
+                      <td className="px-6 py-4 whitespace-nowrap text-sm">
+                        {!selectedData.some((data) => data.classid === course.classid) ? (
+                          <button
+                            onClick={() => handleAddSelectRow(course)}
+                            className="bg-orange-600 hover:bg-red-700 hover:scale-105 transition-all duration-150 text-white py-3 px-4 rounded-lg"
+                          >
+                            เลือก
+                          </button>
+                        ) : (
+                          <button
+                            onClick={() => handleRemoveSelectRow(course)}
+                            className="bg-gray-300 hover:bg-gray-400 hover:scale-105 transition-all duration-150 text-gray-500 font-bold py-3 px-4 rounded-lg"
+                          >
+                            เลือกแล้ว
+                          </button>
+                        )
+                        }
+                      </td>
+                      <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">
+                        {course.coursecode}
+                      </td>
+                      <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                        {course.coursename}
+                      </td>
+                      <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                        {course.sectioncode}
+                      </td>
+                      <td className={`px-6 py-4 whitespace-nowrap text-sm font-LINESeedSansTH_W_Bd ${(course.enrollseat / course.totalseat) < 0.5
+                        ? 'text-green-500'
+                        : (course.enrollseat / course.totalseat) < 0.8
+                          ? 'text-yellow-500'
+                          : (course.enrollseat / course.totalseat) < 1
+                            ? 'text-orange-600'
+                            : 'text-red-900'
+                        }`}
+                      >
+                        <div className='flex flex-col items-center'>
+                          <div>
+                            {course.enrollseat}/{course.totalseat}
                           </div>
-                        </td>
-                        <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                          {course.classtime.split('<br>').map((schedule: string, index: number) => (
-                            <p key={index}>{schedule.includes('ห้อง') ? `• ${schedule}` : schedule}</p>
-                          ))}
-                        </td>
-                        <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                          {course.classexam.split('<br>').map((schedule: string, index: number) => (
-                            <p key={index}>{schedule}</p>
-                          ))}
-                        </td>
-                        <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                          {course.classinstructorname.split('<LI>').map((instructor: string, index: number) => (
-                            <p key={index}>{instructor}</p>
-                          ))}
-                        </td>
-                        <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                          {course.campusname}
-                        </td>
-                        <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                          {course.levelname}
-                        </td>
-                        <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                          {course.classsetdes}
-                        </td>
-                        <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                          {course.classstatusdes}
-                        </td>
-                      </tr>
-                    ))
+                          <div>
+                            {`${(course.enrollseat / course.totalseat) === 1 ? '(เต็ม)' : ''}`}
+                          </div>
+                        </div>
+                      </td>
+                      <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                        {course.classtime.split('<br>').map((schedule: string, index: number) => (
+                          <p className={`${conflictError.some((error: any) => error.coursecode === course.coursecode) ? 'text-red-500' : ''}`} key={index}>{schedule.includes('ห้อง') ? `• ${schedule}` : schedule}</p>
+                        ))}
+                      </td>
+                      <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                        {course.classexam.split('<br>').map((schedule: string, index: number) => (
+                          <p key={index}>{schedule}</p>
+                        ))}
+                      </td>
+                      <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                        {course.classinstructorname.split('<LI>').map((instructor: string, index: number) => (
+                          <p key={index}>{instructor}</p>
+                        ))}
+                      </td>
+                      <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                        {course.campusname}
+                      </td>
+                      <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                        {course.levelname}
+                      </td>
+                      <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                        {course.classsetdes}
+                      </td>
+                      <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                        {course.classstatusdes}
+                      </td>
+                    </tr>
+                  ))
                 )}
               </tbody>
             </table>
@@ -571,6 +588,12 @@ export default function Courses({ coursesProp, onSelectedDataChange, errorProp }
               </select>
               <span className="ml-2">รายการ</span>
             </div>
+            {conflictError.length > 0 && (
+              <div className="flex items-center font-LINESeedSansTH_W_Bd">
+                <span className="text-red-500">เวลาเรียนซ้อนทับกับวิชา {conflictError[0].coursename}</span>
+              </div>
+              )
+            }
             <div>
               <button
                 onClick={() => handlePageChange(currentPage - 1)}

@@ -26,8 +26,8 @@ const Timetable: React.FC = () => {
       else {
         setTimetable(timetableData.data);
         setTimetableSub(timetableSubData.data);
-        console.log('timetableData:', timetableData);
-        console.log('timetableSubData:', timetableSubData);
+        // console.log('timetableData:', timetableData);
+        // console.log('timetableSubData:', timetableSubData);
       }
     };
     getData();
