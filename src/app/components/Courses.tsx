@@ -1,8 +1,9 @@
 import React, { useState, useEffect } from 'react';
 import { fetchCourses, fetchDepartments } from '../lib/api';
 import { IconLoader } from '@tabler/icons-react';
+import parseClassInformation from '../lib/extractClassInformation';
 
-export default function Courses({ coursesProp, onSelectedDataChange }: { coursesProp: any, onSelectedDataChange: (data: any[]) => void }) {
+export default function Courses({ coursesProp, onSelectedDataChange, errorProp }: { coursesProp: any, onSelectedDataChange: (data: any[]) => void, errorProp: any }) {
   const [courses, setCourses] = useState<any[]>([]);
   const [academicYear, setAcademicYear] = useState<number>(2567);
   const [semester, setSemester] = useState<number>(1);
@@ -107,6 +108,46 @@ export default function Courses({ coursesProp, onSelectedDataChange }: { courses
   const handleAddSelectRow = (rowData: any) => {
     // Check for duplicates
     if (!selectedData.some((data) => data.classid === rowData.classid)) {
+      // Extract class information
+      const classInfo = parseClassInformation(rowData);
+      
+      // Check for classtime conflicts
+      const selectedClassTimes = selectedData.map((data) => parseClassInformation(data));
+      const newClassTimes = classInfo;
+      const isConflict = selectedClassTimes.some((selectedClassTime) =>
+        selectedClassTime.some((selectedSchedule) =>
+          newClassTimes.some((newSchedule) =>
+            selectedSchedule.dayAbbreviation === newSchedule.dayAbbreviation &&
+            (
+              (newSchedule.startTime >= selectedSchedule.startTime && newSchedule.startTime < selectedSchedule.endTime) ||
+              (newSchedule.endTime > selectedSchedule.startTime && newSchedule.endTime <= selectedSchedule.endTime) ||
+              (newSchedule.startTime <= selectedSchedule.startTime && newSchedule.endTime >= selectedSchedule.endTime)
+            )
+          )
+        )
+      );
+
+      if (isConflict) {
+        // Find the conflicting times return as array of conflict objects
+        const conflictingTimes = selectedClassTimes.map((selectedClassTime, index) => {
+          const conflictingSchedules = selectedClassTime.filter((selectedSchedule) =>
+            newClassTimes.some((newSchedule) =>
+              selectedSchedule.dayAbbreviation === newSchedule.dayAbbreviation &&
+              (
+                (newSchedule.startTime >= selectedSchedule.startTime && newSchedule.startTime < selectedSchedule.endTime) ||
+                (newSchedule.endTime > selectedSchedule.startTime && newSchedule.endTime <= selectedSchedule.endTime) ||
+                (newSchedule.startTime <= selectedSchedule.startTime && newSchedule.endTime >= selectedSchedule.endTime)
+              )
+            )
+          );
+          return {
+            tobeselected: selectedData[index],
+            conflictwith: conflictingSchedules
+          };
+        });
+        errorProp(conflictingTimes);
+        return;
+      }
       setSelectedData([...selectedData, rowData]);
     }
   };

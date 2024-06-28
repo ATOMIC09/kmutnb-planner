@@ -6,6 +6,9 @@ type ScheduleEntry = {
     room: string;
     instructors: string[];
     classExam: ClassExam;
+    coursecode: string;
+    coursename: string;
+    courseunit: string;
 };
 
 type ExamDetails = {
@@ -19,7 +22,8 @@ type ClassExam = {
     Final: ExamDetails | null;
 };
 
-function parseClasstime(input: string, instructors: string[], classExam: ClassExam): ScheduleEntry[] {
+// Very spaghetti code :(
+function parseClasstime(input: string, instructors: string[], classExam: ClassExam, coursecode: string, coursename: string, courseunit: string): ScheduleEntry[] {
     const lines = input.split('<br>');
     const scheduleEntries: ScheduleEntry[] = [];
 
@@ -46,7 +50,10 @@ function parseClasstime(input: string, instructors: string[], classExam: ClassEx
                 endTime,
                 room,
                 instructors,
-                classExam
+                classExam,
+                coursecode,
+                coursename,
+                courseunit,
             });
         }
     }
@@ -100,11 +107,6 @@ function parseExamDetails(detailLine: string): ExamDetails {
 }
 
 export default function parseClassInformation(course: any) {
-    const scheduleEntries = parseClasstime(course.classtime, parseInstructorName(course.classinstructorname), parseClassExam(course.classexam));
-    return {
-        coursecode: course.coursecode,
-        coursename: course.coursename,
-        courseunit: course.courseunit,
-        scheduleEntries,
-    };
+    const scheduleEntries = parseClasstime(course.classtime, parseInstructorName(course.classinstructorname), parseClassExam(course.classexam), course.coursecode, course.coursename, course.courseunit);
+    return scheduleEntries;
 }

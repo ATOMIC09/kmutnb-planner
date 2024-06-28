@@ -9,28 +9,30 @@ export default function CustomTimetable({ courses }: { courses: any[] }) {
         endTime: string;
         room: string;
         instructors: string[];
-        classExam: {
-            Midterm: any;
-            Final: any;
-        };
-    }
-
-    interface Extracted {
+        classExam: ClassExam;
         coursecode: string;
         coursename: string;
         courseunit: string;
-        scheduleEntries: ScheduleEntry[];
+    }
+
+    interface ClassExam {
+        Midterm: ExamDetails | null;
+        Final: ExamDetails | null;
+    }
+    
+    interface ExamDetails {
+        date: string;
+        startExamTime: string;
+        endExamTime: string;
     }
 
     const daysRow = ['จันทร์', 'อังคาร', 'พุธ', 'พฤหัสบดี', 'ศุกร์', 'เสาร์', 'อาทิตย์'];
     const daysCheckCell = ['จ.', 'อ.', 'พ.', 'พฤ.', 'ศ.', 'ส.', 'อา.'];
     const hours = Array.from({ length: 16 }, (_, i) => 6 + i);
-    const [extractedCourses, setExtractedCourses] = useState<Extracted[]>([]);
+    const [extractedCourses, setExtractedCourses] = useState<ScheduleEntry[]>([]);
     
     useEffect(() => {
-        console.log('courses:', courses);
-        const extracted: Extracted[] = courses.map((course) => extractClassInformation(course));
-        console.log('extracted:', extracted);
+        const extracted = courses.flatMap((course) => extractClassInformation(course));
         setExtractedCourses(extracted);
     }, [courses]);
     
@@ -40,19 +42,15 @@ export default function CustomTimetable({ courses }: { courses: any[] }) {
     
     const renderScheduleForDay = (day: string) => {
         const dayAbbreviation = daysCheckCell[daysRow.indexOf(day)];
-        const scheduleEntriesForDay = extractedCourses.flatMap(course =>
-            course.scheduleEntries.filter(entry => entry.dayAbbreviation === dayAbbreviation)
+        const scheduleEntriesForDay = extractedCourses.filter(course =>
+            course.dayAbbreviation === dayAbbreviation
         );
-        const getEachCourseDetails = (section: string) => {
-            return courses.find(course => course.sectioncode === section);
-        }
-        // Convert time float to full string
+
         const convertTime = (time: string) => {
             const [hour, minute] = time.split('.');
             return `${hour.padStart(2, '0')}:${minute.padEnd(2, '0')}`;
         };
     
-        // Sort scheduleEntriesForDay by startTime to ensure chronological order
         scheduleEntriesForDay.sort((a, b) => parseInt(a.startTime) - parseInt(b.startTime));
     
         const cells = [];
@@ -61,10 +59,6 @@ export default function CustomTimetable({ courses }: { courses: any[] }) {
         scheduleEntriesForDay.forEach(entry => {
             const startTime = parseInt(entry.startTime);
             const endTime = parseInt(entry.endTime);
-            const course = getEachCourseDetails(entry.section.split('.')[1]);
-
-            console.log('entry:', entry);
-            console.log('course:', course);
     
             // Add empty cells if there's a gap between currentTime and startTime
             if (currentTime < startTime) {
@@ -75,18 +69,18 @@ export default function CustomTimetable({ courses }: { courses: any[] }) {
     
             // Render the schedule entry cell
             cells.push(
-                <td key={`${endTime}-${startTime}`} colSpan={calculateColSpan(startTime, endTime)} className="border border-gray-300 p-2 text-center bg-yellow-100">
+                <td key={`${entry.coursecode}-${startTime}`} colSpan={calculateColSpan(startTime, endTime)} className="border border-gray-300 p-2 text-center bg-yellow-100">
                     <div className="text-sm">
                         <div className="font-bold flex justify-between">
-                            <div>{course?.coursecode}</div>
+                            <div>{entry.coursecode} {entry.section}</div>
                             <div>{convertTime(entry.startTime)} - {convertTime(entry.endTime)}</div>
                         </div>
                         <div className="flex justify-between py-2">
-                            <div>{course?.coursename}</div>
+                            <div>{entry.coursename}</div>
                         </div>
                         <div className="font-bold flex justify-between">
                             <div>{entry.room}</div>
-                            <div>{course?.courseunit}</div>
+                            <div>{entry.courseunit}</div>
                         </div>
                     </div>
                 </td>
@@ -132,4 +126,4 @@ export default function CustomTimetable({ courses }: { courses: any[] }) {
             </div>
         </div>
     );
-};
+}
