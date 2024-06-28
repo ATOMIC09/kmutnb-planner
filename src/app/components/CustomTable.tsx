@@ -108,7 +108,7 @@ export default function CustomTable({ courses }: { courses: any[] }) {
                 </tbody>
                 </table>
             }
-            {courses.length === 0 && <div className="py-8 text-center mt-4">รอการเลือกวิชาจากรายการด้านล่าง</div>}
+            {courses.length === 0 && <div className="py-8 text-center mt-4">รอการเลือกรายวิชา</div>}
         </div>
     </div>
     );

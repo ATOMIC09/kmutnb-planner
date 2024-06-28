@@ -120,7 +120,7 @@ export default function Courses({ coursesProp, onSelectedDataChange }: { courses
   }, [selectedData, onSelectedDataChange]);
 
   return (
-    <div className="bg-orange-100 p-4 rounded-lg mt-4">
+    <div className="bg-orange-100 p-4 rounded-lg mt-4 mb-4">
       <h1 className="text-2xl mb-4">วิชาที่เปิดสอน</h1>
 
       <div className="flex items-center justify-center w-full">

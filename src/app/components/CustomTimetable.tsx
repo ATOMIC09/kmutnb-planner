@@ -1,4 +1,3 @@
-'use client'
 import React, { useState, useEffect } from 'react';
 import extractClassInformation from '../lib/extractClassInformation';
 
@@ -34,7 +33,79 @@ export default function CustomTimetable({ courses }: { courses: any[] }) {
         console.log('extracted:', extracted);
         setExtractedCourses(extracted);
     }, [courses]);
-        
+    
+    const calculateColSpan = (startTime: number, endTime: number) => {
+        return endTime - startTime;
+    };
+    
+    const renderScheduleForDay = (day: string) => {
+        const dayAbbreviation = daysCheckCell[daysRow.indexOf(day)];
+        const scheduleEntriesForDay = extractedCourses.flatMap(course =>
+            course.scheduleEntries.filter(entry => entry.dayAbbreviation === dayAbbreviation)
+        );
+        const getEachCourseDetails = (section: string) => {
+            return courses.find(course => course.sectioncode === section);
+        }
+        // Convert time float to full string
+        const convertTime = (time: string) => {
+            const [hour, minute] = time.split('.');
+            return `${hour.padStart(2, '0')}:${minute.padEnd(2, '0')}`;
+        };
+    
+        // Sort scheduleEntriesForDay by startTime to ensure chronological order
+        scheduleEntriesForDay.sort((a, b) => parseInt(a.startTime) - parseInt(b.startTime));
+    
+        const cells = [];
+        let currentTime = 6; // starting hour
+    
+        scheduleEntriesForDay.forEach(entry => {
+            const startTime = parseInt(entry.startTime);
+            const endTime = parseInt(entry.endTime);
+            const course = getEachCourseDetails(entry.section.split('.')[1]);
+
+            console.log('entry:', entry);
+            console.log('course:', course);
+    
+            // Add empty cells if there's a gap between currentTime and startTime
+            if (currentTime < startTime) {
+                cells.push(
+                    <td key={`empty-${currentTime}`} colSpan={startTime - currentTime} className="border border-gray-300 p-2"></td>
+                );
+            }
+    
+            // Render the schedule entry cell
+            cells.push(
+                <td key={`${endTime}-${startTime}`} colSpan={calculateColSpan(startTime, endTime)} className="border border-gray-300 p-2 text-center bg-yellow-100">
+                    <div className="text-sm">
+                        <div className="font-bold flex justify-between">
+                            <div>{course?.coursecode}</div>
+                            <div>{convertTime(entry.startTime)} - {convertTime(entry.endTime)}</div>
+                        </div>
+                        <div className="flex justify-between py-2">
+                            <div>{course?.coursename}</div>
+                        </div>
+                        <div className="font-bold flex justify-between">
+                            <div>{entry.room}</div>
+                            <div>{course?.courseunit}</div>
+                        </div>
+                    </div>
+                </td>
+            );
+    
+            currentTime = endTime; // Update currentTime to endTime for next iteration
+        });
+    
+        // Add empty cells to fill up until 22:00 if currentTime is less than 22
+        if (currentTime < 22) {
+            cells.push(
+                <td key={`empty-${currentTime}`} colSpan={22 - currentTime} className="border border-gray-300 p-2"></td>
+            );
+        }
+    
+        return cells;
+    };
+    
+
     return (
         <div className="bg-orange-100 p-4 rounded-lg">
             <div className="overflow-x-auto">
@@ -44,31 +115,15 @@ export default function CustomTimetable({ courses }: { courses: any[] }) {
                             <tr>
                                 <th className="border border-gray-300 p-2"></th>
                                 {hours.map((hour) => (
-                                    <th key={hour} className="border border-gray-300 p-2 text-center">{`${hour}:00 - ${hour + 1}:00`}</th>
+                                    <th key={hour} className="border border-gray-300 p-2 text-center">{`${hour}:00`}</th>
                                 ))}
                             </tr>
                         </thead>
                         <tbody className="bg-white divide-y divide-gray-200">
                             {daysRow.map((day) => (
-                                <tr key={day}>
+                                <tr key={day} className="h-20"> {/* Set a fixed height for each row */}
                                     <td className="border border-gray-300 p-2">{day}</td>
-                                    {/* Match hours and add colspan to merge cell */}
-                                    {hours.map((hour) => (
-                                        <td key={hour} className="border border-gray-200 p-2">
-                                            {extractedCourses.length > 0 &&
-                                                extractedCourses
-                                                    .map((course) => course.scheduleEntries)
-                                                    .flat()
-                                                    .filter((item) => item.dayAbbreviation === daysCheckCell[daysRow.indexOf(day)] && Number(item.startTime) <= hour && Number(item.endTime) > hour)
-                                                    .map((item, idx) => (
-                                                        <div key={idx} className="bg-blue-200 p-1 rounded">
-                                                            <div>ตอนเรียน {item.section}</div>
-                                                            <div>ห้อง {item.room}</div>
-                                                            <div>เวลา {item.startTime}-{item.endTime}</div>
-                                                        </div>
-                                            ))}
-                                        </td>
-                                    ))}
+                                    {renderScheduleForDay(day)}
                                 </tr>
                             ))}
                         </tbody>
