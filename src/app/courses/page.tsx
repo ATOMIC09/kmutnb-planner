@@ -10,9 +10,9 @@ export default function OffersCourses() {
     setSelectedData(data as any);
   };
 
-  useEffect(() => {
-    console.log('selectedData page.tsx:', selectedData);
-  }, [selectedData]);
+  // useEffect(() => {
+  //   console.log('selectedData page.tsx:', selectedData);
+  // }, [selectedData]);
 
   return (
     <div className="font-LINESeedSansTH_W_Rg container mx-auto p-8">

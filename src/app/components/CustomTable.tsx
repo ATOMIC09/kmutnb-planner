@@ -1,11 +1,11 @@
 import React from 'react';
-// import CustomTimetable from './CustomTimetable';
+import CustomTimetable from './CustomTimetable';
 
 export default function CustomTable({ courses }: { courses: any[] }) {
     return (
     <div className="bg-orange-100 p-4 rounded-lg">
         <h1 className="text-2xl mb-4">วิชาที่เลือกแล้ว</h1>
-        {/* <CustomTimetable courses={courses} /> */}
+        <CustomTimetable courses={courses} />
         <div className="overflow-x-auto">
             {courses.length > 0 &&
                 <table className="min-w-full divide-y divide-gray-200">
