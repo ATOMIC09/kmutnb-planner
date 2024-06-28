@@ -613,6 +613,16 @@ export default function Courses({ coursesProp, onSelectedDataChange }: { courses
             </div>
           </div>
         )}
+        {courses.length > 0 && !loading && showAllFiltered && (
+          <div className="mt-4">
+            {conflictError.length > 0 && (
+              <div className="flex items-center font-LINESeedSansTH_W_Bd justify-center">
+                <span className="text-red-500">เวลาเรียนซ้อนทับกับวิชา {conflictError[0].coursename}</span>
+              </div>
+              )
+            }
+          </div>
+        )}
       </div>
     </div>
   );
