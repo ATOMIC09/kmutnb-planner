@@ -27,10 +27,10 @@ const items = [
 
 export function AppSidebar() {
   return (
-    <Sidebar className="font-LINESeedSansTH_W_Rg">
+    <Sidebar>
       <SidebarContent>
         <SidebarGroup>
-          <SidebarGroupLabel>เมนู</SidebarGroupLabel>
+          <SidebarGroupLabel className="font-LINESeedSansTH_W_Bd">เมนู</SidebarGroupLabel>
           <SidebarGroupContent>
             <SidebarMenu>
               {items.map((item) => (
@@ -38,7 +38,7 @@ export function AppSidebar() {
                   <SidebarMenuButton asChild>
                     <a href={item.url}>
                       <item.icon className="w-24 h-24"/>
-                      <span className="text-base">{item.title}</span>
+                      <span className="text-base font-LINESeedSansTH_W_Rg">{item.title}</span>
                     </a>
                   </SidebarMenuButton>
                 </SidebarMenuItem>
