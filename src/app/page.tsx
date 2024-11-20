@@ -2,6 +2,7 @@
 import { useEffect, useState } from "react";
 import CourseSearch from "@/components/course-search";
 import CourseTable from "@/components/course-table";
+import CoursesHint from "@/components/courses-hint";
 
 export default function Home() {
   const [coursesResult, setCoursesResult] = useState<Course[]>([]);
@@ -11,7 +12,7 @@ export default function Home() {
     officername: string;
     officersurname: string;
   }
-  
+
   interface Course {
     classid: number;
     program: string | null;
@@ -40,15 +41,21 @@ export default function Home() {
     courseunit: string;
     instructor: Instructor[];
   }
-  
+
   useEffect(() => {
     console.log('coursesResult Prop:', coursesResult);
   }, [coursesResult]);
 
   return (
-    <div className="flex flex-col items-center w-screen">
-      <CourseSearch coursesResult={setCoursesResult} />
-      {coursesResult.length > 0 && <CourseTable coursesResult={coursesResult} />}
-    </div>
+    <main>
+      <div className="font-LINESeedSansTH_W_Rg text-4xl text-center">วิชาที่เปิดสอน</div>
+      <div className="flex flex-col items-center w-screen">
+        <div className="md:flex">
+          <CourseSearch coursesResult={setCoursesResult} />
+          <CoursesHint />
+        </div>
+        {coursesResult.length > 0 && <CourseTable coursesResult={coursesResult} />}
+      </div>
+    </main>
   );
 }

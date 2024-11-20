@@ -1,5 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import parseClassInformation from '@/lib/extractClassInformation';
+import { Input } from "@/components/ui/input"
+import { Button } from "@/components/ui/button"
 
 interface CourseTableProps {
     coursesResult: Course[];
@@ -163,12 +165,13 @@ export default function CourseTable({ coursesResult }: CourseTableProps) {
     }
 
     return (
-        <main className="font-LINESeedSansTH_W_Rg text-gray-700 px-4 sm:px-12 pt-4 w-screen">
+        <main className="font-LINESeedSansTH_W_Rg text-gray-700 p-4 w-screen">
             <div className="p-4 mt-4 border-1 rounded-lg shadow-md mx-auto">
                 <div className="mt-4">
                     {/* Courses List Section */}
-                    <div className='flex justify-between lg:items-end items-start flex-col sm:flex-row'>
-                        <div className='flex flex-row lg:flex-col mb-4 items-end lg:items-start'>
+                    <div className="flex flex-col sm:flex-row justify-between lg:items-end items-start">
+                        {/* Result counter */}
+                        <div className="flex flex-row lg:flex-col mb-4 items-end lg:items-start">
                             <div>
                                 {coursesResult.length > 0 && <h2 className="text-xl">ผลการค้นหา</h2>}
                             </div>
@@ -176,23 +179,23 @@ export default function CourseTable({ coursesResult }: CourseTableProps) {
                                 {coursesResult.length > 0 && <p className="text-sm pl-2 lg:pl-0">ทั้งหมด {coursesResult.length} รายการ</p>}
                             </div>
                         </div>
-                        <div>
-                            {coursesResult.length > 0 && <div className="flex items-center justify-center w-full">
-                                <div className='flex gap-4 mb-4'>
-                                    {/* Text filter input */}
-                                    <div className="flex-col items-center">
-                                        <input
-                                            type="text"
-                                            value={filterText}
-                                            onChange={handleFilterTextChange}
-                                            placeholder='ค้นหาจากผลลัพธ์'
-                                            className="p-1 border border-gray-300 rounded-lg text-sm w-60"
-                                        />
-                                    </div>
+
+                        {/* Search by result */}
+                        {coursesResult.length > 0 && (
+                            <div className="md:flex md:justify-end w-full">
+                                <div className="gap-4 mb-4">
+                                    <Input
+                                        type="text"
+                                        value={filterText}
+                                        onChange={handleFilterTextChange}
+                                        placeholder="ค้นหาจากผลลัพธ์"
+                                        className="p-1 border border-gray-300 rounded-lg text-sm w-full md:w-60 h-12 md:h-9"
+                                    />
                                 </div>
-                            </div>}
-                        </div>
+                            </div>
+                        )}
                     </div>
+
 
                     {/* Courses Table */}
                     {coursesResult.length > 0 &&
@@ -245,19 +248,21 @@ export default function CourseTable({ coursesResult }: CourseTableProps) {
                                             <tr key={course.classid} className={`${conflictError.some((error: any) => error.coursecode === course.coursecode) ? 'bg-red-200' : ''}`} >
                                                 <td className="px-6 py-4 whitespace-nowrap text-sm">
                                                     {!selectedData.some((data) => data.classid === course.classid) ? (
-                                                        <button
+                                                        <Button
+                                                            variant={'outline'}
                                                             onClick={() => handleAddSelectRow(course)}
-                                                            className="bg-orange-600 hover:bg-red-700 hover:scale-105 transition-all duration-150 text-white py-3 px-4 rounded-lg"
+                                                            className="bg-orange-600 hover:bg-red-700 transition-all duration-150 text-white py-3 px-4 rounded-lg"
                                                         >
                                                             เลือก
-                                                        </button>
+                                                        </Button>
                                                     ) : (
-                                                        <button
+                                                        <Button
+                                                            variant={'outline'}
                                                             onClick={() => handleRemoveSelectRow(course)}
-                                                            className="bg-gray-300 hover:bg-gray-400 hover:scale-105 transition-all duration-150 text-gray-500 font-bold py-3 px-4 rounded-lg"
+                                                            className="bg-gray-300 hover:bg-gray-400 transition-all duration-150 text-gray-500 font-bold py-3 px-4 rounded-lg"
                                                         >
                                                             เลือกแล้ว
-                                                        </button>
+                                                        </Button>
                                                     )
                                                     }
                                                 </td>
@@ -322,19 +327,21 @@ export default function CourseTable({ coursesResult }: CourseTableProps) {
                                             <tr key={course.classid} className={`${conflictError.some((error: any) => error.coursecode === course.coursecode) ? 'bg-red-200' : ''}`}>
                                                 <td className="px-6 py-4 whitespace-nowrap text-sm">
                                                     {!selectedData.some((data) => data.classid === course.classid) ? (
-                                                        <button
+                                                        <Button
+                                                            variant={'outline'}
                                                             onClick={() => handleAddSelectRow(course)}
-                                                            className="bg-orange-600 hover:bg-red-700 hover:scale-105 transition-all duration-150 text-white py-3 px-4 rounded-lg"
+                                                            className="bg-orange-600 hover:bg-red-700 hover:text-white transition-all duration-150 text-white py-3 px-4 rounded-lg"
                                                         >
                                                             เลือก
-                                                        </button>
+                                                        </Button>
                                                     ) : (
-                                                        <button
+                                                        <Button
+                                                            variant={'outline'}
                                                             onClick={() => handleRemoveSelectRow(course)}
-                                                            className="bg-gray-300 hover:bg-gray-400 hover:scale-105 transition-all duration-150 text-gray-500 font-bold py-3 px-4 rounded-lg"
+                                                            className="bg-gray-300 hover:bg-gray-400 hover:text-white transition-all duration-150 text-gray-500 font-bold py-3 px-4 rounded-lg"
                                                         >
                                                             เลือกแล้ว
-                                                        </button>
+                                                        </Button>
                                                     )
                                                     }
                                                 </td>
@@ -421,21 +428,23 @@ export default function CourseTable({ coursesResult }: CourseTableProps) {
                             )
                             }
                             <div>
-                                <button
+                                <Button
+                                    variant={'outline'}
                                     onClick={() => handlePageChange(currentPage - 1)}
                                     disabled={currentPage === 1}
                                     className="px-3 py-1 border border-gray-300 rounded-lg mr-2 disabled:opacity-50 disabled:cursor-not-allowed"
                                 >
                                     ก่อนหน้า
-                                </button>
+                                </Button>
                                 <span>หน้า {currentPage} / {Math.ceil(coursesResult.length / pageSize)}</span>
-                                <button
+                                <Button
+                                    variant={'outline'}
                                     onClick={() => handlePageChange(currentPage + 1)}
                                     disabled={currentPage === Math.ceil(coursesResult.length / pageSize)}
                                     className="px-3 py-1 border border-gray-300 rounded-lg ml-2 disabled:opacity-50 disabled:cursor-not-allowed"
                                 >
                                     ถัดไป
-                                </button>
+                                </Button>
                             </div>
                         </div>
                     )}

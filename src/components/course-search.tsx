@@ -117,8 +117,7 @@ export default function CourseSearch({ coursesResult }: { coursesResult: (data: 
     };
 
     return (
-        <main className="font-LINESeedSansTH_W_Rg text-gray-700 px-4 sm:px-12 pt-4 w-screen md:w-[1000px]">
-            <div className="text-4xl">วิชาที่เปิดสอน</div>
+        <main className="font-LINESeedSansTH_W_Rg text-gray-700 px-4 pt-4 w-screen md:w-[1000px]">
             <div className="p-4 mt-4 border-1 rounded-lg shadow-md mx-auto">
                 <div className="mb-4 flex-col md:flex-row ">
                     <div className="flex flex-col md:flex-row gap-4 justify-between">
