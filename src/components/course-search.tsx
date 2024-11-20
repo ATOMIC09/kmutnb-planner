@@ -58,11 +58,11 @@ export default function CourseSearch() {
 
 
     return (
-        <main className="font-LINESeedSansTH_W_Rg text-gray-700 px-4 sm:px-12 py-4 w-full">
+        <main className="font-LINESeedSansTH_W_Rg text-gray-700 px-4 sm:px-12 py-4 w-screen md:w-full">
             <div className="text-4xl">วิชาที่เปิดสอน</div>
-            <div className="p-4 mt-4 mb-4 border-1 rounded-lg shadow-md w-full min-w-full mx-auto">
-                <div className="mb-4">
-                    <div className="flex flex-col gap-4">
+            <div className="p-4 mt-4 mb-4 border-1 rounded-lg shadow-md mx-auto">
+                <div className="mb-4 flex-col md:flex-row ">
+                    <div className="flex flex-col md:flex-row gap-4">
                         <div className="flex-col items-center w-full">
                             <label className="block mb-2">ปีการศึกษา</label>
                             <Select
@@ -139,7 +139,7 @@ export default function CourseSearch() {
                         </div>
 
                     </div>
-                    <div className="flex justify-between gap-8 py-4">
+                    <div className="flex flex-col md:flex-row justify-between gap-8 py-4 ">
                         <div className="flex-col items-center">
                             <label className="block mb-2">คณะ</label>
                             <Select
@@ -177,6 +177,7 @@ export default function CourseSearch() {
                             <Select
                                 value={department}
                                 onValueChange={(value) => setDepartment(value)}
+                                disabled={faculty === '00'}
                             >
                                 <SelectTrigger className="md:w-[400px]">
                                     <SelectValue defaultValue={department} placeholder="เลือกภาควิชา" />
