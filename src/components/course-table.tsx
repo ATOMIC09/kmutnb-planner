@@ -5,6 +5,7 @@ import { Button } from "@/components/ui/button"
 
 interface CourseTableProps {
     coursesResult: Course[];
+    onSelectedDataChange: (selectedData: Course[]) => void;
 }
 
 interface Instructor {
@@ -42,13 +43,17 @@ interface Course {
     instructor: Instructor[];
 }
 
-export default function CourseTable({ coursesResult }: CourseTableProps) {
+export default function CourseTable({ coursesResult, onSelectedDataChange }: CourseTableProps) {
     const [pageSize, setPageSize] = useState<number>(10);
     const [currentPage, setCurrentPage] = useState<number>(1);
     const [filterText, setFilterText] = useState<string>('');
     const [showAllFiltered, setShowAllFiltered] = useState<boolean>(false);
     const [selectedData, setSelectedData] = useState<any[]>([]);
     const [conflictError, setConflictError] = useState<any[]>([]);
+
+    useEffect(() => {
+        onSelectedDataChange(selectedData);
+      }, [selectedData, onSelectedDataChange]);
 
     // Reset filter
     useEffect(() => {

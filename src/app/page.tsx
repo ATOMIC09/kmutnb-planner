@@ -3,9 +3,12 @@ import { useEffect, useState } from "react";
 import CourseSearch from "@/components/course-search";
 import CourseTable from "@/components/course-table";
 import CoursesHint from "@/components/courses-hint";
+import CoursesTimetable from "@/components/courses-timetable";
+import CoursesSelectedTable from "@/components/courses-selectedtable";
 
 export default function Home() {
   const [coursesResult, setCoursesResult] = useState<Course[]>([]);
+  const [selectedCourses, setSelectedCourses] = useState<any[]>([]);
 
   interface Instructor {
     prefixname: string;
@@ -42,10 +45,6 @@ export default function Home() {
     instructor: Instructor[];
   }
 
-  useEffect(() => {
-    console.log('coursesResult Prop:', coursesResult);
-  }, [coursesResult]);
-
   return (
     <main>
       <div className="font-LINESeedSansTH_W_Rg text-4xl text-center">วิชาที่เปิดสอน</div>
@@ -54,7 +53,9 @@ export default function Home() {
           <CourseSearch coursesResult={setCoursesResult} />
           <CoursesHint />
         </div>
-        {coursesResult.length > 0 && <CourseTable coursesResult={coursesResult} />}
+        {coursesResult.length > 0 && <CourseTable coursesResult={coursesResult} onSelectedDataChange={setSelectedCourses} />}
+        {coursesResult.length > 0 && <CoursesTimetable coursesResult={selectedCourses} />}
+        {selectedCourses.length > 0 && <CoursesSelectedTable coursesResult={selectedCourses} />}
       </div>
     </main>
   );
