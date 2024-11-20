@@ -56,7 +56,6 @@ export default function CourseSearch() {
         getDepartments(faculty);
     }, [faculty]);
 
-
     return (
         <main className="font-LINESeedSansTH_W_Rg text-gray-700 px-4 sm:px-12 py-4 w-screen md:w-full">
             <div className="text-4xl">วิชาที่เปิดสอน</div>
@@ -185,7 +184,7 @@ export default function CourseSearch() {
                                 <SelectContent className="font-LINESeedSansTH_W_Rg">
                                     {departmentList.map((option) => (
                                         <SelectItem key={option.comboid} value={option.comboid}>
-                                            {option.comboshow}
+                                            {option.comboshow.split(' : ')[1]}
                                         </SelectItem>
                                     ))}
                                 </SelectContent>
