@@ -5,7 +5,7 @@ import CourseTable from "@/components/course-table";
 
 export default function Home() {
   const [coursesResult, setCoursesResult] = useState<Course[]>([]);
-  
+
   interface Instructor {
     prefixname: string;
     officername: string;
@@ -48,7 +48,7 @@ export default function Home() {
   return (
     <div className="flex flex-col items-center w-screen">
       <CourseSearch coursesResult={setCoursesResult} />
-      <CourseTable coursesResult={coursesResult} />
+      {coursesResult.length > 0 && <CourseTable coursesResult={coursesResult} />}
     </div>
   );
 }
