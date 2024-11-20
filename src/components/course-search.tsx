@@ -8,6 +8,8 @@ import {
     SelectTrigger,
     SelectValue,
 } from "@/components/ui/select";
+import { Input } from "@/components/ui/input"
+import { Button } from "@/components/ui/button"
 import { fetchCourses, fetchDepartments } from '@/lib/api';
 
 export default function CourseSearch() {
@@ -57,9 +59,9 @@ export default function CourseSearch() {
     }, [faculty]);
 
     return (
-        <main className="font-LINESeedSansTH_W_Rg text-gray-700 px-4 sm:px-12 py-4 w-screen md:w-full">
+        <main className="font-LINESeedSansTH_W_Rg text-gray-700 px-4 sm:px-12 pt-4 w-screen md:w-full">
             <div className="text-4xl">วิชาที่เปิดสอน</div>
-            <div className="p-4 mt-4 mb-4 border-1 rounded-lg shadow-md mx-auto">
+            <div className="p-4 mt-4 border-1 rounded-lg shadow-md mx-auto">
                 <div className="mb-4 flex-col md:flex-row ">
                     <div className="flex flex-col md:flex-row gap-4">
                         <div className="flex-col items-center w-full">
@@ -138,7 +140,7 @@ export default function CourseSearch() {
                         </div>
 
                     </div>
-                    <div className="flex flex-col md:flex-row justify-between gap-8 py-4 ">
+                    <div className="flex flex-col md:flex-row justify-between gap-4 pt-4 ">
                         <div className="flex-col items-center">
                             <label className="block mb-2">คณะ</label>
                             <Select
@@ -182,7 +184,7 @@ export default function CourseSearch() {
                                     <SelectValue defaultValue={department} placeholder="เลือกภาควิชา" />
                                 </SelectTrigger>
                                 <SelectContent className="font-LINESeedSansTH_W_Rg">
-                                    {departmentList.map((option) => (
+                                    {faculty !== '00' && departmentList.length > 0 && departmentList.map((option) => (
                                         <SelectItem key={option.comboid} value={option.comboid}>
                                             {option.comboshow.split(' : ')[1]}
                                         </SelectItem>
@@ -190,6 +192,27 @@ export default function CourseSearch() {
                                 </SelectContent>
                             </Select>
                         </div>
+                    </div>
+                    <div className="flex flex-col md:flex-row justify-between gap-4 pt-4 ">
+                        <div className="flex-col items-center">
+                            <label className="block mb-2">รหัสวิชา</label>
+                            <Input
+                                type="text"
+                                className="md:w-[300px] p-2 rounded-lg h-12 md:h-9"
+                                placeholder="กรอกรหัสวิชา"
+                            />
+                        </div>
+                        <div className="flex-col items-center">
+                            <label className="block mb-2">ชื่อวิชา</label>
+                            <Input
+                                type="text"
+                                className="md:w-[400px] p-2 rounded-lg h-12 md:h-9"
+                                placeholder="กรอกชื่อวิชา"
+                            />
+                        </div>
+                    </div>
+                    <div className="flex flex-col md:flex-row justify-between gap-4 pt-8">
+                        <Button variant="outline" className="text-lg text-white hover:text-white rounded-lg w-full h-12 bg-[#ff8838] hover:bg-[#d75f0f]">ค้นหา</Button>
                     </div>
                 </div>
             </div>
