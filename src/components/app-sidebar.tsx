@@ -38,7 +38,7 @@ export function AppSidebar() {
                   <SidebarMenuButton asChild>
                     <a href={item.url}>
                       <item.icon className="w-24 h-24"/>
-                      <span className="text-base font-LINESeedSansTH_W_Rg">{item.title}</span>
+                      <span className="text-lg font-LINESeedSansTH_W_Rg">{item.title}</span>
                     </a>
                   </SidebarMenuButton>
                 </SidebarMenuItem>
