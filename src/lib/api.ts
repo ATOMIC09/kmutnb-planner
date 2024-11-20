@@ -114,12 +114,12 @@ export const fetchTimetableSub = async (year: number, semester: number, startDat
 };
 
 export const fetchCourses = async (
-  academicYear: number,
-  semester: number,
-  campus: number,
-  level: number,
-  faculty: number,
-  department: number,
+  academicYear: string,
+  semester: string,
+  campus: string,
+  level: string,
+  faculty: string,
+  department: string,
   courseCode: string,
   courseName: string
 ) => {

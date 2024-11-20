@@ -1,5 +1,3 @@
-'use client';
-
 import React, { useEffect, useState } from "react";
 import {
     Select,
@@ -11,8 +9,44 @@ import {
 import { Input } from "@/components/ui/input"
 import { Button } from "@/components/ui/button"
 import { fetchCourses, fetchDepartments } from '@/lib/api';
+import { Loader2 } from "lucide-react"
 
-export default function CourseSearch() {
+interface Instructor {
+    prefixname: string;
+    officername: string;
+    officersurname: string;
+}
+
+interface Course {
+    classid: number;
+    program: string | null;
+    acadyear: string | null;
+    semester: string | null;
+    campusid: number;
+    campusname: string;
+    levelid: number;
+    levelname: string;
+    courseid: number;
+    coursecode: string;
+    revisioncode: string;
+    coursename: string;
+    coursenameeng: string | null;
+    sectioncode: string;
+    totalseat: number;
+    enrollseat: number;
+    classstatus: string;
+    classstatusdes: string;
+    classset: string;
+    classsetdes: string;
+    classnote: string;
+    classinstructorname: string;
+    classtime: string;
+    classexam: string;
+    courseunit: string;
+    instructor: Instructor[];
+}
+
+export default function CourseSearch({ coursesResult }: { coursesResult: (data: Course[]) => void }) {
     const [year, setYear] = useState('');
     const [yearOptions, setYearOptions] = useState<string[]>([]);
     const [semester, setSemester] = useState('1');
@@ -21,6 +55,9 @@ export default function CourseSearch() {
     const [faculty, setFaculty] = useState('00');
     const [department, setDepartment] = useState('00');
     const [departmentList, setDepartmentList] = useState<Department[]>([]);
+    const [courseCode, setCourseCode] = useState('');
+    const [courseName, setCourseName] = useState('');
+    const [isFetching, setIsFetching] = useState(false);
 
     interface Department {
         comboid: string;
@@ -58,19 +95,40 @@ export default function CourseSearch() {
         getDepartments(faculty);
     }, [faculty]);
 
+    const handleFetchData = async () => {
+        setIsFetching(true);
+        try {
+            const coursesData = await fetchCourses(
+                year,
+                semester,
+                campus,
+                level,
+                faculty,
+                department,
+                courseCode,
+                courseName
+            );
+            coursesResult(coursesData);
+        } catch (error) {
+            console.error('Error fetching courses data:', error);
+        } finally {
+            setIsFetching(false);
+        }
+    };
+
     return (
-        <main className="font-LINESeedSansTH_W_Rg text-gray-700 px-4 sm:px-12 pt-4 w-screen md:w-full">
+        <main className="font-LINESeedSansTH_W_Rg text-gray-700 px-4 sm:px-12 pt-4 w-screen md:w-[1000px]">
             <div className="text-4xl">วิชาที่เปิดสอน</div>
             <div className="p-4 mt-4 border-1 rounded-lg shadow-md mx-auto">
                 <div className="mb-4 flex-col md:flex-row ">
-                    <div className="flex flex-col md:flex-row gap-4">
-                        <div className="flex-col items-center w-full">
+                    <div className="flex flex-col md:flex-row gap-4 justify-between">
+                        <div className="flex-col items-center flex-auto">
                             <label className="block mb-2">ปีการศึกษา</label>
                             <Select
                                 value={year}
                                 onValueChange={(value) => setYear(value)}
                             >
-                                <SelectTrigger className="md:w-[130px]">
+                                <SelectTrigger className="md:w-full">
                                     <SelectValue defaultValue={year} placeholder="เลือกปีการศึกษา" />
                                 </SelectTrigger>
                                 <SelectContent className="font-LINESeedSansTH_W_Rg">
@@ -83,13 +141,13 @@ export default function CourseSearch() {
                             </Select>
                         </div>
 
-                        <div className="flex-col items-center">
+                        <div className="flex-col items-center flex-auto">
                             <label className="block mb-2">ภาค</label>
                             <Select
                                 value={semester}
                                 onValueChange={(value) => setSemester(value)}
                             >
-                                <SelectTrigger className="md:w-[130px]">
+                                <SelectTrigger className="md:w-full">
                                     <SelectValue defaultValue={semester} placeholder="เลือกภาคการศึกษา" />
                                 </SelectTrigger>
                                 <SelectContent className="font-LINESeedSansTH_W_Rg">
@@ -100,13 +158,13 @@ export default function CourseSearch() {
                             </Select>
                         </div>
 
-                        <div className="flex-col items-center">
+                        <div className="flex-col items-center flex-auto">
                             <label className="block mb-2">วิทยาเขต</label>
                             <Select
                                 value={campus}
                                 onValueChange={(value) => setCampus(value)}
                             >
-                                <SelectTrigger className="md:w-[200px]">
+                                <SelectTrigger className="md:w-full">
                                     <SelectValue defaultValue={campus} placeholder="เลือกวิทยาเขต" />
                                 </SelectTrigger>
                                 <SelectContent className="font-LINESeedSansTH_W_Rg">
@@ -117,13 +175,13 @@ export default function CourseSearch() {
                             </Select>
                         </div>
 
-                        <div className="flex-col items-center">
+                        <div className="flex-col items-center flex-auto">
                             <label className="block mb-2">ระดับ</label>
                             <Select
                                 value={level}
                                 onValueChange={(value) => setLevel(value)}
                             >
-                                <SelectTrigger className="md:w-[240px]">
+                                <SelectTrigger className="md:w-full">
                                     <SelectValue defaultValue={level} placeholder="เลือกระดับ" />
                                 </SelectTrigger>
                                 <SelectContent className="font-LINESeedSansTH_W_Rg">
@@ -140,14 +198,14 @@ export default function CourseSearch() {
                         </div>
 
                     </div>
-                    <div className="flex flex-col md:flex-row justify-between gap-4 pt-4 ">
-                        <div className="flex-col items-center">
+                    <div className="flex flex-col md:flex-row justify-between gap-4 pt-4">
+                        <div className="flex-col items-center flex-auto">
                             <label className="block mb-2">คณะ</label>
                             <Select
                                 value={faculty}
                                 onValueChange={(value) => setFaculty(value)}
                             >
-                                <SelectTrigger className="md:w-[300px]">
+                                <SelectTrigger className="md:w-full">
                                     <SelectValue defaultValue={faculty} placeholder="เลือกคณะ" />
                                 </SelectTrigger>
                                 <SelectContent className="font-LINESeedSansTH_W_Rg">
@@ -173,14 +231,14 @@ export default function CourseSearch() {
                                 </SelectContent>
                             </Select>
                         </div>
-                        <div className="flex-col items-center">
+                        <div className="flex-col items-center flex-auto">
                             <label className="block mb-2">ภาควิชา</label>
                             <Select
                                 value={department}
                                 onValueChange={(value) => setDepartment(value)}
                                 disabled={faculty === '00'}
                             >
-                                <SelectTrigger className="md:w-[400px]">
+                                <SelectTrigger className="md:w-full">
                                     <SelectValue defaultValue={department} placeholder="เลือกภาควิชา" />
                                 </SelectTrigger>
                                 <SelectContent className="font-LINESeedSansTH_W_Rg">
@@ -193,26 +251,36 @@ export default function CourseSearch() {
                             </Select>
                         </div>
                     </div>
-                    <div className="flex flex-col md:flex-row justify-between gap-4 pt-4 ">
-                        <div className="flex-col items-center">
+                    <div className="flex flex-col md:flex-row justify-between gap-4 pt-4">
+                        <div className="flex-col items-center flex-auto">
                             <label className="block mb-2">รหัสวิชา</label>
                             <Input
                                 type="text"
-                                className="md:w-[300px] p-2 rounded-lg h-12 md:h-9"
+                                className="md:w-full p-2 rounded-lg h-12 md:h-9"
                                 placeholder="กรอกรหัสวิชา"
+                                onChange={(e) => setCourseCode(e.target.value)}
                             />
                         </div>
-                        <div className="flex-col items-center">
+                        <div className="flex-col items-center flex-auto">
                             <label className="block mb-2">ชื่อวิชา</label>
                             <Input
                                 type="text"
-                                className="md:w-[400px] p-2 rounded-lg h-12 md:h-9"
+                                className="md:w-full p-2 rounded-lg h-12 md:h-9"
                                 placeholder="กรอกชื่อวิชา"
+                                onChange={(e) => setCourseName(e.target.value)}
                             />
                         </div>
                     </div>
                     <div className="flex flex-col md:flex-row justify-between gap-4 pt-8">
-                        <Button variant="outline" className="text-lg text-white hover:text-white rounded-lg w-full h-12 bg-[#ff8838] hover:bg-[#d75f0f]">ค้นหา</Button>
+                        <Button
+                            variant="outline"
+                            className="text-lg text-white hover:text-white rounded-lg w-full h-12 bg-[#ff8838] hover:bg-[#d75f0f]"
+                            disabled={isFetching}
+                            onClick={handleFetchData}
+                        >
+                            {isFetching ? <Loader2 className="animate-spin h-6 w-6" /> : ''}
+                            {isFetching ? 'กำลังค้นหา...' : 'ค้นหา'}
+                        </Button>
                     </div>
                 </div>
             </div>
