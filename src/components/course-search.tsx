@@ -82,11 +82,19 @@ export default function CourseSearch({ coursesResult }: { coursesResult: (data: 
         const getDepartments = async (facultyId: string) => {
             try {
                 const departmentsData = await fetchDepartments(facultyId);
+                const allDepartmentsOption = {
+                    comboid: '0',
+                    comboshow: '0000 : ทุกภาควิชา',
+                };
+                departmentsData.unshift(allDepartmentsOption);
+                // Set the department list state
                 setDepartmentList(departmentsData);
-                if (facultyId === '0') {
-                    setDepartment('0');
-                } else {
-                    setDepartment(departmentsData[0].comboid);
+                if (departmentsData.length !== 0) {
+                    if (facultyId === '0') {
+                        setDepartment('0');
+                    } else {
+                        setDepartment(departmentsData[0].comboid);
+                    }
                 }
             } catch (error) {
                 console.error('Error fetching departments data:', error);
