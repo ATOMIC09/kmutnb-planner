@@ -1,5 +1,8 @@
 import React, { useState, useEffect } from 'react';
 import extractClassInformation from '@/lib/extractClassInformation';
+import { useScreenshot } from 'use-react-screenshot';
+import { Button } from './ui/button';
+import { Printer } from "@mynaui/icons-react";
 
 interface CourseTableProps {
     coursesResult: Course[];
@@ -41,6 +44,19 @@ interface Course {
 }
 
 export default function CoursesTimetable({ coursesResult }: CourseTableProps) {
+    const ref = React.useRef<HTMLTableElement>(null)
+    const [image, takeScreenshot] = useScreenshot()
+    const getImage = () => {
+        takeScreenshot(ref.current).then((capturedImage: string) => {
+            if (capturedImage) {
+                const link = document.createElement('a');
+                link.href = capturedImage;
+                link.download = 'timetable-screenshot.png';
+                link.click();
+            }
+        });
+    }
+
     interface ScheduleEntry {
         section: string;
         dayAbbreviation: string;
@@ -143,7 +159,7 @@ export default function CoursesTimetable({ coursesResult }: CourseTableProps) {
         <div className="font-LINESeedSansTH_W_Rg p-4 rounded-lg">
             <div className="p-4 overflow-x-auto border-1 rounded-lg shadow-md">
                 {coursesResult.length > 0 && (
-                    <table className="min-w-full divide-y divide-gray-200">
+                    <table ref={ref} className="min-w-full divide-y divide-gray-200"> {/* Attach ref here */}
                         <thead>
                             <tr>
                                 <th className="border border-gray-300 p-2"></th>
@@ -162,6 +178,15 @@ export default function CoursesTimetable({ coursesResult }: CourseTableProps) {
                         </tbody>
                     </table>
                 )}
+                <div className="flex justify-center mt-4">
+                    <Button
+                        variant={'default'}
+                        onClick={() => getImage()}
+                        className="bg-blue-500 hover:bg-blue-700 hover:text-white transition-all duration-150 text-gray-50 font-bold p-2 rounded-lg"
+                    >
+                        <Printer />
+                    </Button>
+                </div>
             </div>
         </div>
     );
