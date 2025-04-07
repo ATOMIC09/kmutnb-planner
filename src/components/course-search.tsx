@@ -58,6 +58,7 @@ export default function CourseSearch({ coursesResult }: { coursesResult: (data: 
     const [courseCode, setCourseCode] = useState('');
     const [courseName, setCourseName] = useState('');
     const [isFetching, setIsFetching] = useState(false);
+    const [isNotFound, setIsNotFound] = useState(false);
 
     interface Department {
         comboid: string;
@@ -117,6 +118,11 @@ export default function CourseSearch({ coursesResult }: { coursesResult: (data: 
                 courseName
             );
             coursesResult(coursesData);
+            if (coursesData.length === 0) {
+                setIsNotFound(true);
+            } else {
+                setIsNotFound(false);
+            }
         } catch (error) {
             console.error('Error fetching courses data:', error);
         } finally {
@@ -290,6 +296,12 @@ export default function CourseSearch({ coursesResult }: { coursesResult: (data: 
                         </Button>
                     </div>
                 </div>
+            {/* If coursesResult is 0 */}
+            {isNotFound && !isFetching && (
+                <div className="flex flex-col items-center justify-center">
+                <div className="font-LINESeedSansTH_W_Rg text-lg text-gray-700 text-center">ไม่พบผลการค้นหา 🫤</div>
+                </div>
+            )}
             </div>
         </main>
     );
