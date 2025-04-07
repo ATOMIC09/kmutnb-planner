@@ -43,7 +43,9 @@ export default function CoursesSelectedTable({ coursesResult }: CourseTableProps
     return (
     <main className="font-LINESeedSansTH_W_Rg p-4">
         <div className='p-4 rounded-lg border-1 shadow-md'>
-            <h1 className="text-2xl mb-4">วิชาที่เลือกแล้ว</h1>
+            <h1 className="text-gray-700 text-2xl mb-4">วิชาที่เลือกแล้ว</h1>
+            {coursesResult.length > 0 &&
+                <h1 className="text-gray-700 text-md mb-4">เลือกแล้ว: {coursesResult.length} วิชา</h1>}
 
             <div className="overflow-x-auto">
                 {coursesResult.length > 0 &&

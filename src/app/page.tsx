@@ -61,10 +61,10 @@ export default function Home() {
           {coursesResult.length > 0 && <CourseTable coursesResult={coursesResult} onSelectedDataChange={setSelectedCourses} />}
         </div>
         <div className="w-full lg:w-5/6">
-          {coursesResult.length > 0 && <CoursesTimetable coursesResult={selectedCourses} />}
+          {selectedCourses.length > 0 && <CoursesSelectedTable coursesResult={selectedCourses} />}
         </div>
         <div className="w-full lg:w-5/6">
-          {selectedCourses.length > 0 && <CoursesSelectedTable coursesResult={selectedCourses} />}
+          {coursesResult.length > 0 && <CoursesTimetable coursesResult={selectedCourses} />}
         </div>
       </div>
     </main>

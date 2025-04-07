@@ -44,8 +44,11 @@ interface Course {
 }
 
 export default function CoursesTimetable({ coursesResult }: CourseTableProps) {
-    const ref = React.useRef<HTMLTableElement>(null)
-    const [image, takeScreenshot] = useScreenshot()
+    const ref = React.useRef<HTMLTableElement>(null);
+    const [image, takeScreenshot] = useScreenshot();
+    const [cellColor, setCellColor] = useState<string>('#fbd38d'); // Default background color
+    const [textColor, setTextColor] = useState<string>('#000000'); // Default text color
+
     const getImage = () => {
         takeScreenshot(ref.current).then((capturedImage: string) => {
             if (capturedImage) {
@@ -55,7 +58,7 @@ export default function CoursesTimetable({ coursesResult }: CourseTableProps) {
                 link.click();
             }
         });
-    }
+    };
 
     interface ScheduleEntry {
         section: string;
@@ -124,7 +127,12 @@ export default function CoursesTimetable({ coursesResult }: CourseTableProps) {
     
             // Render the schedule entry cell
             cells.push(
-                <td key={`${entry.coursecode}-${startTime}`} colSpan={calculateColSpan(startTime, endTime)} className="border border-gray-300 p-2 text-center bg-orange-100">
+                <td
+                    key={`${entry.coursecode}-${startTime}`}
+                    colSpan={calculateColSpan(startTime, endTime)}
+                    className="border border-gray-300 p-2 text-center"
+                    style={{ backgroundColor: cellColor, color: textColor }} // Apply background and text colors
+                >
                     <div className="text-sm">
                         <div className="font-bold flex justify-between">
                             <div>{entry.coursecode} {entry.section}</div>
@@ -158,8 +166,10 @@ export default function CoursesTimetable({ coursesResult }: CourseTableProps) {
     return (
         <div className="font-LINESeedSansTH_W_Rg p-4 rounded-lg">
             <div className="p-4 overflow-x-auto border-1 rounded-lg shadow-md">
+                <h1 className="text-gray-700 text-2xl mb-4">ตารางเรียน</h1>
+                <h1 className="text-red-500 text-md mb-4">แนะนำให้บันทึกภาพในโหมด Desktop เพราะยังเป็นเวอร์ชันทดสอบทำให้ยังมีบักแปลก ๆ</h1>
                 {coursesResult.length > 0 && (
-                    <table ref={ref} className="min-w-full divide-y divide-gray-200"> {/* Attach ref here */}
+                    <table ref={ref} className="min-w-full divide-y divide-gray-200">
                         <thead>
                             <tr>
                                 <th className="border border-gray-300 p-2"></th>
@@ -178,15 +188,47 @@ export default function CoursesTimetable({ coursesResult }: CourseTableProps) {
                         </tbody>
                     </table>
                 )}
-                <div className="flex justify-center mt-4">
-                    <Button
-                        variant={'default'}
-                        onClick={() => getImage()}
-                        className="bg-blue-500 hover:bg-blue-700 hover:text-white transition-all duration-150 text-gray-50 font-bold p-2 rounded-lg"
-                    >
-                        <Printer />
-                    </Button>
-                </div>
+                {/* Tools */}
+                {coursesResult.length > 0 && (
+                    <div className="flex justify-center mt-4 space-x-4">
+                        {/* Print timetable */}
+                        <div className="flex items-center space-x-2 bg-gray-50 p-2 rounded-lg border-1 shadow-lg">    
+                            <label htmlFor="saveImage" className="text-gray-700 font-bold">บันทึกเป็นภาพ</label>
+                            <Button
+                                id="saveImage"
+                                variant={'default'}
+                                onClick={() => getImage()}
+                                className="bg-blue-500 hover:bg-blue-700 hover:text-white transition-all duration-150 text-gray-50 font-bold p-2 rounded-lg"
+                            >
+                                <Printer />
+                            </Button>  
+                        </div>
+                        
+                        {/* Background Color Picker */}
+                        <div className="flex items-center space-x-2 bg-gray-50 p-2 rounded-lg border-1 shadow-lg">
+                            <label htmlFor="cellColor" className="text-gray-700 font-bold">สีพื้นหลัง</label>
+                            <input
+                                id="cellColor"
+                                type="color"
+                                value={cellColor}
+                                onChange={(e) => setCellColor(e.target.value)}
+                                className="w-10 h-10"
+                            />
+                        </div>
+
+                        {/* Text Color Picker */}
+                        <div className="flex items-center space-x-2 bg-gray-50 p-2 rounded-lg border-1 shadow-lg">
+                            <label htmlFor="textColor" className="text-gray-700 font-bold">สีข้อความ</label>
+                            <input
+                                id="textColor"
+                                type="color"
+                                value={textColor}
+                                onChange={(e) => setTextColor(e.target.value)}
+                                className="w-10 h-10"
+                            />
+                        </div>
+                    </div>
+                )}
             </div>
         </div>
     );
