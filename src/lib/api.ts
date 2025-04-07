@@ -9,12 +9,12 @@ let token = '';
 class V {
   constructor() {}
 
-  getdateformatora(P: any) {
+  getdateformatora(P: unknown) {
     let Z;
     if (P instanceof Date) {
       Z = P;
     } else {
-      Z = new Date(P);
+      Z = new Date(P as string | number | Date);
     }
     const ce = Z.getDate().toString().padStart(2, '0');
     const ve = (Z.getMonth() + 1).toString().padStart(2, '0');
@@ -45,7 +45,7 @@ axiosInstance.interceptors.response.use(
   response => response,
   async error => {
     if (error.response && error.response.status === 401) {
-      console.log('Got 401 Token expired, fetching new token...');
+      console.info('Got 401 Token expired, fetching new token...');
       removeStorage('tokenweb');
       removeStorage('tokentime');
       const newToken = await fetchNewToken();
@@ -73,7 +73,7 @@ export const userLogin = async (username: string, password: string) => {
   
   // Transform dates and other necessary values before encryption
   const transformedCredentials = JSON.stringify(credentials, function (Me, xe) {
-    var Ae = xe;
+    let Ae = xe;
     return this[Me] instanceof Date && (Ae = Ie.getdateformatora(xe)), void 0 === this[Me] ? null : Ae;
   });
   const encryptedData = encryptor.encryptData(transformedCredentials);
@@ -143,7 +143,7 @@ export const fetchCourses = async (
 //   return res.data;
 // }
 
-const setStorage = (key: string, value: any) => {
+const setStorage = (key: string, value: unknown) => {
   localStorage.setItem(key, JSON.stringify(value));
 };
 
@@ -186,7 +186,7 @@ export const getToken = async (): Promise<string> => {
 export const getUserInfo = async () => {
   const token = await getToken();
   const decoded = jwtDecode(token);
-  return decoded as any;
+  return decoded as unknown;
 }
 
 export const fetchDepartments = async (facultyId: string) => {

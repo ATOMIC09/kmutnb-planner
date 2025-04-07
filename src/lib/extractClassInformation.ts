@@ -69,9 +69,9 @@ function parseInstructorName(input: string): string[] {
     return input.split('<LI>').map((instructor) => instructor.trim()).filter(Boolean);
 }
 
-function parseExamSchedule(input: string): string[] {
-    return input.split('<br>').map((schedule) => schedule.trim()).filter(Boolean);
-}
+// function parseExamSchedule(input: string): string[] {
+//     return input.split('<br>').map((schedule) => schedule.trim()).filter(Boolean);
+// }
 
 function parseClassExam(input: string): ClassExam {
     const lines = input.split('<br>').map((line) => line.trim());
@@ -106,7 +106,17 @@ function parseExamDetails(detailLine: string): ExamDetails {
     };
 }
 
-export default function parseClassInformation(course: any) {
-    const scheduleEntries = parseClasstime(course.classtime, parseInstructorName(course.classinstructorname), parseClassExam(course.classexam), course.coursecode, course.coursename, course.courseunit);
+type Course = {
+    classtime: string;
+    classinstructorname: string;
+    classexam: string;
+    coursecode: string;
+    coursename: string;
+    courseunit: string;
+};
+
+export default function parseClassInformation(course: unknown) {
+    const typedCourse = course as Course;
+    const scheduleEntries = parseClasstime(typedCourse.classtime, parseInstructorName(typedCourse.classinstructorname), parseClassExam(typedCourse.classexam), typedCourse.coursecode, typedCourse.coursename, typedCourse.courseunit);
     return scheduleEntries;
 }

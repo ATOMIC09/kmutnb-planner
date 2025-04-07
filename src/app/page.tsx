@@ -1,14 +1,49 @@
 'use client'
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import CourseSearch from "@/components/course-search";
 import CourseTable from "@/components/course-table";
 import CoursesHint from "@/components/courses-hint";
 import CoursesTimetable from "@/components/courses-timetable";
 import CoursesSelectedTable from "@/components/courses-selectedtable";
 
+interface selectCourses {
+  classid: number
+  program: string | null
+  acadyear: string | null
+  semester: string | null
+  campusid: number
+  campusname: string
+  levelid: number
+  levelname: string
+  courseid: number
+  coursecode: string
+  revisioncode: string
+  coursename: string
+  coursenameeng: string | null
+  sectioncode: string
+  totalseat: number
+  enrollseat: number
+  classstatus: string
+  classstatusdes: string
+  classset: string
+  classsetdes: string
+  classnote: string
+  classinstructorname: string
+  classtime: string
+  classexam: string
+  courseunit: string
+  instructor: Instructor[]
+}
+
+interface Instructor {
+  prefixname: string
+  officername: string
+  officersurname: string
+}
+
 export default function Home() {
   const [coursesResult, setCoursesResult] = useState<Course[]>([]);
-  const [selectedCourses, setSelectedCourses] = useState<any[]>([]);
+  const [selectedCourses, setSelectedCourses] = useState<selectCourses[]>([]);
 
   interface Instructor {
     prefixname: string;

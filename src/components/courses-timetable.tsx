@@ -45,7 +45,7 @@ interface Course {
 
 export default function CoursesTimetable({ coursesResult }: CourseTableProps) {
     const ref = React.useRef<HTMLTableElement>(null);
-    const [image, takeScreenshot] = useScreenshot();
+    const [, takeScreenshot] = useScreenshot();
     const [cellColor, setCellColor] = useState<string>('#fbd38d'); // Default background color
     const [textColor, setTextColor] = useState<string>('#000000'); // Default text color
 
@@ -111,7 +111,7 @@ export default function CoursesTimetable({ coursesResult }: CourseTableProps) {
     
         scheduleEntriesForDay.sort((a, b) => parseInt(a.startTime) - parseInt(b.startTime));
     
-        const cells = [];
+        const cells: JSX.Element[] = [];
         let currentTime = 6; // starting hour
     
         scheduleEntriesForDay.forEach(entry => {
@@ -165,10 +165,10 @@ export default function CoursesTimetable({ coursesResult }: CourseTableProps) {
 
     return (
         <div className="font-LINESeedSansTH_W_Rg p-4 rounded-lg">
-            <div className="p-4 overflow-x-auto border-1 rounded-lg shadow-md">
+            {coursesResult.length > 0 && (<div className="p-4 overflow-x-auto border-1 rounded-lg shadow-md">
                 <h1 className="text-gray-700 text-2xl mb-4">ตารางเรียน</h1>
                 <h1 className="text-red-500 text-md mb-4">แนะนำให้บันทึกภาพในโหมด Desktop เพราะยังเป็นเวอร์ชันทดสอบทำให้ยังมีบักแปลก ๆ</h1>
-                {coursesResult.length > 0 && (
+
                     <table ref={ref} className="min-w-full divide-y divide-gray-200">
                         <thead>
                             <tr>
@@ -187,9 +187,8 @@ export default function CoursesTimetable({ coursesResult }: CourseTableProps) {
                             ))}
                         </tbody>
                     </table>
-                )}
+
                 {/* Tools */}
-                {coursesResult.length > 0 && (
                     <div className="flex justify-center mt-4 space-x-4">
                         {/* Print timetable */}
                         <div className="flex items-center space-x-2 bg-gray-50 p-2 rounded-lg border-1 shadow-lg">    
@@ -228,8 +227,8 @@ export default function CoursesTimetable({ coursesResult }: CourseTableProps) {
                             />
                         </div>
                     </div>
-                )}
-            </div>
+                </div>
+            )}
         </div>
     );
 }

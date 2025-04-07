@@ -48,8 +48,8 @@ export default function CourseTable({ coursesResult, onSelectedDataChange }: Cou
     const [currentPage, setCurrentPage] = useState<number>(1);
     const [filterText, setFilterText] = useState<string>('');
     const [showAllFiltered, setShowAllFiltered] = useState<boolean>(false);
-    const [selectedData, setSelectedData] = useState<any[]>([]);
-    const [conflictError, setConflictError] = useState<any[]>([]);
+    const [selectedData, setSelectedData] = useState<Course[]>([]);
+    const [conflictError, setConflictError] = useState<unknown[]>([]);
 
     useEffect(() => {
         onSelectedDataChange(selectedData);
@@ -111,10 +111,10 @@ export default function CourseTable({ coursesResult, onSelectedDataChange }: Cou
         course.levelname.toLowerCase().includes(filterText.toLowerCase())
     );
 
-    const handleAddSelectRow = (rowData: any) => {
+    const handleAddSelectRow = (rowData: unknown) => {
         setConflictError([]);
         // Check for duplicates
-        if (!selectedData.some((data) => data.classid === rowData.classid)) {
+        if (!selectedData.some((data) => data.classid === (rowData as Course).classid)) {
             // Extract class information
             const classInfo = parseClassInformation(rowData);
 
@@ -155,17 +155,19 @@ export default function CourseTable({ coursesResult, onSelectedDataChange }: Cou
                 setConflictError(findConflictErrorProp(conflictingTimes));
                 return;
             }
-            setSelectedData([...selectedData, rowData]);
+            setSelectedData([...selectedData, rowData as Course]);
         }
     };
 
-    const handleRemoveSelectRow = (rowData: any) => {
+    const handleRemoveSelectRow = (rowData: unknown) => {
         setConflictError([]);
-        setSelectedData(selectedData.filter((data) => data.classid !== rowData.classid));
+        setSelectedData(selectedData.filter((data) => data.classid !== (rowData as Course).classid));
     }
 
-    const findConflictErrorProp = (errorProp: any) => {
-        const error = errorProp.find((error: any) => error.conflictwith.length > 0);
+    const findConflictErrorProp = (errorProp: unknown) => {
+        const error = Array.isArray(errorProp) 
+            ? errorProp.find((error: any) => error.conflictwith && error.conflictwith.length > 0) 
+            : undefined;
         return error.conflictwith;
     }
 
@@ -250,7 +252,7 @@ export default function CourseTable({ coursesResult, onSelectedDataChange }: Cou
                                 <tbody className="bg-white divide-y divide-gray-200">
                                     {showAllFiltered ? (
                                         filteredCourses.map((course) => (
-                                            <tr key={course.classid} className={`${conflictError.some((error: any) => error.coursecode === course.coursecode) ? 'bg-red-200' : ''}`} >
+                                            <tr key={course.classid} className={`${conflictError.some((error) => (error as Course).coursecode === course.coursecode) ? 'bg-red-200' : ''}`} >
                                                 <td className="px-6 py-4 whitespace-nowrap text-sm">
                                                     {!selectedData.some((data) => data.classid === course.classid) ? (
                                                         <Button
@@ -300,7 +302,7 @@ export default function CourseTable({ coursesResult, onSelectedDataChange }: Cou
                                                 </td>
                                                 <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
                                                     {course.classtime.split('<br>').map((schedule: string, index: number) => (
-                                                        <p className={`${conflictError.some((error: any) => error.coursecode === course.coursecode) ? 'text-red-500' : ''}`} key={index}>{schedule.includes('ห้อง') ? `• ${schedule}` : schedule}</p>
+                                                        <p className={`${conflictError.some((error: unknown) => error.coursecode === course.coursecode) ? 'text-red-500' : ''}`} key={index}>{schedule.includes('ห้อง') ? `• ${schedule}` : schedule}</p>
                                                     ))}
                                                 </td>
                                                 <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
@@ -329,7 +331,7 @@ export default function CourseTable({ coursesResult, onSelectedDataChange }: Cou
                                         ))
                                     ) : (
                                         paginatedCourses.map((course) => (
-                                            <tr key={course.classid} className={`${conflictError.some((error: any) => error.coursecode === course.coursecode) ? 'bg-red-200' : ''}`}>
+                                            <tr key={course.classid} className={`${conflictError.some((error: unknown) => error.coursecode === course.coursecode) ? 'bg-red-200' : ''}`}>
                                                 <td className="px-6 py-4 whitespace-nowrap text-sm">
                                                     {!selectedData.some((data) => data.classid === course.classid) ? (
                                                         <Button
@@ -379,7 +381,7 @@ export default function CourseTable({ coursesResult, onSelectedDataChange }: Cou
                                                 </td>
                                                 <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
                                                     {course.classtime.split('<br>').map((schedule: string, index: number) => (
-                                                        <p className={`${conflictError.some((error: any) => error.coursecode === course.coursecode) ? 'text-red-500' : ''}`} key={index}>{schedule.includes('ห้อง') ? `• ${schedule}` : schedule}</p>
+                                                        <p className={`${conflictError.some((error: unknown) => error.coursecode === course.coursecode) ? 'text-red-500' : ''}`} key={index}>{schedule.includes('ห้อง') ? `• ${schedule}` : schedule}</p>
                                                     ))}
                                                 </td>
                                                 <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
