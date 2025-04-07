@@ -166,9 +166,9 @@ export default function CourseTable({ coursesResult, onSelectedDataChange }: Cou
 
     const findConflictErrorProp = (errorProp: unknown) => {
         const error = Array.isArray(errorProp) 
-            ? errorProp.find((error: any) => error.conflictwith && error.conflictwith.length > 0) 
+            ? errorProp.find((error: { conflictwith: unknown[] }) => error.conflictwith && error.conflictwith.length > 0) 
             : undefined;
-        return error.conflictwith;
+        return error?.conflictwith || [];
     }
 
     return (
@@ -302,7 +302,7 @@ export default function CourseTable({ coursesResult, onSelectedDataChange }: Cou
                                                 </td>
                                                 <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
                                                     {course.classtime.split('<br>').map((schedule: string, index: number) => (
-                                                        <p className={`${conflictError.some((error: unknown) => error.coursecode === course.coursecode) ? 'text-red-500' : ''}`} key={index}>{schedule.includes('ห้อง') ? `• ${schedule}` : schedule}</p>
+                                                        <p className={`${conflictError.some((error) => (error as Course).coursecode === course.coursecode) ? 'text-red-500' : ''}`} key={index}>{schedule.includes('ห้อง') ? `• ${schedule}` : schedule}</p>
                                                     ))}
                                                 </td>
                                                 <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
@@ -331,7 +331,7 @@ export default function CourseTable({ coursesResult, onSelectedDataChange }: Cou
                                         ))
                                     ) : (
                                         paginatedCourses.map((course) => (
-                                            <tr key={course.classid} className={`${conflictError.some((error: unknown) => error.coursecode === course.coursecode) ? 'bg-red-200' : ''}`}>
+                                            <tr key={course.classid} className={`${conflictError.some((error) => (error as Course).coursecode === course.coursecode) ? 'bg-red-200' : ''}`}>
                                                 <td className="px-6 py-4 whitespace-nowrap text-sm">
                                                     {!selectedData.some((data) => data.classid === course.classid) ? (
                                                         <Button
@@ -381,7 +381,7 @@ export default function CourseTable({ coursesResult, onSelectedDataChange }: Cou
                                                 </td>
                                                 <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
                                                     {course.classtime.split('<br>').map((schedule: string, index: number) => (
-                                                        <p className={`${conflictError.some((error: unknown) => error.coursecode === course.coursecode) ? 'text-red-500' : ''}`} key={index}>{schedule.includes('ห้อง') ? `• ${schedule}` : schedule}</p>
+                                                        <p className={`${conflictError.some((error) => (error as Course).coursecode === course.coursecode) ? 'text-red-500' : ''}`} key={index}>{schedule.includes('ห้อง') ? `• ${schedule}` : schedule}</p>
                                                     ))}
                                                 </td>
                                                 <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
@@ -430,7 +430,7 @@ export default function CourseTable({ coursesResult, onSelectedDataChange }: Cou
                             </div>
                             {conflictError.length > 0 && (
                                 <div className="flex items-center font-LINESeedSansTH_W_Bd">
-                                    <span className="text-red-500">เวลาเรียนซ้อนทับกับวิชา {conflictError[0].coursename}</span>
+                                    <span className="text-red-500">เวลาเรียนซ้อนทับกับวิชา {(conflictError[0] as Course).coursename}</span>
                                 </div>
                             )
                             }
@@ -460,7 +460,7 @@ export default function CourseTable({ coursesResult, onSelectedDataChange }: Cou
                         <div className="mt-4">
                             {conflictError.length > 0 && (
                                 <div className="flex items-center font-LINESeedSansTH_W_Bd justify-center">
-                                    <span className="text-red-500">เวลาเรียนซ้อนทับกับวิชา {conflictError[0].coursename}</span>
+                                    <span className="text-red-500">เวลาเรียนซ้อนทับกับวิชา {(conflictError[0] as Course).coursename}</span>
                                 </div>
                             )
                             }
