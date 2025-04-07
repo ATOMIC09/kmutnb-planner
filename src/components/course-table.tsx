@@ -170,7 +170,7 @@ export default function CourseTable({ coursesResult, onSelectedDataChange }: Cou
     }
 
     return (
-        <main className="font-LINESeedSansTH_W_Rg text-gray-700 p-4 w-screen">
+        <main className="font-LINESeedSansTH_W_Rg text-gray-700 p-4">
             <div className="p-4 mt-4 border-1 rounded-lg shadow-md mx-auto">
                 <div className="mt-4">
                     {/* Courses List Section */}

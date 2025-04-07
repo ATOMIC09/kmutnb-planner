@@ -108,7 +108,7 @@ export default function CoursesTimetable({ coursesResult }: CourseTableProps) {
     
             // Render the schedule entry cell
             cells.push(
-                <td key={`${entry.coursecode}-${startTime}`} colSpan={calculateColSpan(startTime, endTime)} className="border border-gray-300 p-2 text-center bg-yellow-100">
+                <td key={`${entry.coursecode}-${startTime}`} colSpan={calculateColSpan(startTime, endTime)} className="border border-gray-300 p-2 text-center bg-orange-100">
                     <div className="text-sm">
                         <div className="font-bold flex justify-between">
                             <div>{entry.coursecode} {entry.section}</div>
@@ -141,7 +141,7 @@ export default function CoursesTimetable({ coursesResult }: CourseTableProps) {
 
     return (
         <div className="font-LINESeedSansTH_W_Rg p-4 rounded-lg">
-            <div className="overflow-x-auto">
+            <div className="p-4 overflow-x-auto border-1 rounded-lg shadow-md">
                 {coursesResult.length > 0 && (
                     <table className="min-w-full divide-y divide-gray-200">
                         <thead>

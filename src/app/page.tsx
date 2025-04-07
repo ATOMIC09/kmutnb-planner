@@ -49,13 +49,23 @@ export default function Home() {
     <main>
       <div className="font-LINESeedSansTH_W_Rg text-4xl text-center">วิชาที่เปิดสอน</div>
       <div className="flex flex-col items-center w-screen">
-        <div className="md:flex">
-          <CourseSearch coursesResult={setCoursesResult} />
-          <CoursesHint />
+        <div className="md:flex justify-center w-auto sm:w-screen lg:w-[1000px]">
+          <div className="w-full">
+            <CourseSearch coursesResult={setCoursesResult} />
+          </div>
+          <div className="w-full md:w-2/3">
+            <CoursesHint />
+          </div>
         </div>
-        {coursesResult.length > 0 && <CourseTable coursesResult={coursesResult} onSelectedDataChange={setSelectedCourses} />}
-        {coursesResult.length > 0 && <CoursesTimetable coursesResult={selectedCourses} />}
-        {selectedCourses.length > 0 && <CoursesSelectedTable coursesResult={selectedCourses} />}
+        <div className="w-full lg:w-5/6">
+          {coursesResult.length > 0 && <CourseTable coursesResult={coursesResult} onSelectedDataChange={setSelectedCourses} />}
+        </div>
+        <div className="w-full lg:w-5/6">
+          {coursesResult.length > 0 && <CoursesTimetable coursesResult={selectedCourses} />}
+        </div>
+        <div className="w-full lg:w-5/6">
+          {selectedCourses.length > 0 && <CoursesSelectedTable coursesResult={selectedCourses} />}
+        </div>
       </div>
     </main>
   );
