@@ -1,36 +1,70 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+## What is this 
+KMUTNB Planner is a web application designed to help students at King Mongkut's University of Technology North Bangkok (KMUTNB) plan their course schedules efficiently. This tool allows you to search for available courses, add them to your timetable, and visualize potential schedule conflicts before registration.
 
-## Getting Started
+## Features
 
-First, run the development server:
+- **Course Search**: Find courses by code, name, or instructor
+- **Interactive Course Table**: View course details including section, instructor, time, and exam schedule
+- **Course Selection**: Select courses to add to your personal timetable
+- **Visual Timetable**: View all selected courses in a weekly timetable format
+- **Schedule Customization**: Customize the appearance of your timetable with color options
+- **Export Functionality**: Save your timetable as an image for reference
 
-```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
-```
+## How to Use
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+### 1. Search for Courses
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+Use the search bar at the top of the page to find courses by:
+- Course code (e.g., "010123213")
+- Course name (e.g., "ARTIFICIAL INTELLIGENCE")
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+And use the "ค้นหาจากผลลัพธ์" to filter the results
 
-## Learn More
+### 2. View and Select Courses
 
-To learn more about Next.js, take a look at the following resources:
+After searching, the results will appear in a table showing:
+- Course code and name
+- Section
+- Schedule (day and time)
+- Instructor
+- Exam dates
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+Click the checkbox that you want to add to your schedule.
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+### 3. View Your Timetable
 
-## Deploy on Vercel
+Selected courses will automatically appear in the timetable view at the bottom of the page. The timetable shows:
+- Course codes and sections
+- Class times
+- Room numbers
+- Course units
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+### 4. Customize Your Timetable
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+You can customize the appearance of your timetable using the tools below it:
+- Change the background color of course blocks
+- Change the text color
+
+### 5. Save Your Timetable
+
+Click the "บันทึกเป็นภาพ" (Save as Image) button to download your timetable as a PNG file for future reference.
+
+## Technologies Used
+
+- Next.js
+- TypeScript
+- Tailwind CSS
+- shadcn/ui components
+- use-react-screenshot for image capture
+
+## Contribution
+
+Contributions are welcome! Please feel free to submit issues or pull requests to improve the functionality or user experience.
+
+## Disclaimer
+
+This website is intended solely for academic schedule planning purposes. It is not an official website of King Mongkut's University of Technology North Bangkok. This tool does not modify any data in the official student registration information system, nor does it collect any personal information from users.
+
+## Demo
+
+![screencapture-kmutnb-planner-vercel-app-2025-04-09-18_54_44](https://github.com/user-attachments/assets/d985539f-6af3-4808-ac66-82d914c1bb68)
