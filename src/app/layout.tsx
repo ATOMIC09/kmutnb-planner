@@ -6,8 +6,14 @@ import { Analytics } from '@vercel/analytics/next';
 import Footer from "@/components/footer";
 
 export const metadata: Metadata = {
-  title: "KMUNTB Planner",
-  description: "A student planner for KMUNTB students",
+  title: "KMUTNB Planner: จัดตารางเรียน",
+  description: "ระบบจัดตารางเรียนสำหรับนักศึกษา มจพ. (KMUTNB) ค้นหารายวิชา จัดตารางเรียน ตรวจสอบวันสอบ ง่ายและสะดวกในที่เดียว",
+  icons: {
+    icon: ['/favicon.ico?v=4'],
+    apple: ['/apple-touch-icon.png?v=4'],
+    shortcut: ['/apple-touch-icon.png'],
+  },
+  manifest: '/site.webmanifest',
 };
 
 export default function RootLayout({
