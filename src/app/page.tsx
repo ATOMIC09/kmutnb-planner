@@ -82,7 +82,7 @@ export default function Home() {
 
   return (
     <main>
-      <div className="font-LINESeedSansTH_W_Rg text-4xl text-center">วิชาที่เปิดสอน</div>
+      <div className="font-LINESeedSansTH_W_Rg text-4xl text-center">จัดตารางเรียน</div>
       <div className="flex flex-col items-center w-screen">
         <div className="md:flex justify-center w-auto sm:w-screen lg:w-[1000px]">
           <div className="w-full">

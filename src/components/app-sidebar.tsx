@@ -14,7 +14,7 @@ import {
 // Menu items.
 const items = [
   {
-    title: "วิชาที่เปิดสอน",
+    title: "จัดตารางเรียน",
     url: "/",
     icon: BookOpen,
   },
