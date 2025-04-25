@@ -66,6 +66,7 @@ function parseTime(time: string): string {
 }
 
 function parseInstructorName(input: string): string[] {
+    if (!input) return [];
     return input.split('<LI>').map((instructor) => instructor.trim()).filter(Boolean);
 }
 
@@ -74,6 +75,8 @@ function parseInstructorName(input: string): string[] {
 // }
 
 function parseClassExam(input: string): ClassExam {
+    if (!input) return { Midterm: null, Final: null };
+    
     const lines = input.split('<br>').map((line) => line.trim());
     const classExam: ClassExam = { Midterm: null, Final: null };
 

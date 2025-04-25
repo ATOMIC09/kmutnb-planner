@@ -118,19 +118,19 @@ export default function CoursesSelectedTable({ coursesResult }: CourseTableProps
                                 </div>
                             </td>
                             <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                                {course.classtime.split('<br>').map((schedule: string, index: number) => (
+                                {course.classtime ? course.classtime.split('<br>').map((schedule: string, index: number) => (
                                 <p key={index}>{schedule.includes('ห้อง') ? `• ${schedule}` : schedule}</p>
-                                ))}
+                                )) : <p>-</p>}
                             </td>
                             <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                                {course.classexam.split('<br>').map((schedule: string, index: number) => (
+                                {course.classexam ? course.classexam.split('<br>').map((schedule: string, index: number) => (
                                 <p key={index}>{schedule}</p>
-                                ))}
+                                )) : <p>-</p>}
                             </td>
                             <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                                {course.classinstructorname.split('<LI>').map((instructor: string, index: number) => (
+                                {course.classinstructorname ? course.classinstructorname.split('<LI>').map((instructor: string, index: number) => (
                                 <p key={index}>{instructor}</p>
-                                ))}
+                                )) : <p>-</p>}
                             </td>
                             <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
                                 {course.campusname}
