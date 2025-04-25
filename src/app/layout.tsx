@@ -4,6 +4,7 @@ import { SidebarProvider, SidebarTrigger } from "@/components/ui/sidebar"
 import { AppSidebar } from "@/components/app-sidebar"
 import { Analytics } from '@vercel/analytics/next';
 import Footer from "@/components/footer";
+import { SpeedInsights } from "@vercel/speed-insights/next"
 
 export const metadata: Metadata = {
   title: "KMUTNB Planner: จัดตารางเรียน",
@@ -31,6 +32,7 @@ export default function RootLayout({
             {children}
             <Footer />
             <Analytics />
+            <SpeedInsights/>
           </main>
         </SidebarProvider>
       </body>
