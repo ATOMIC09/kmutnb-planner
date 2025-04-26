@@ -102,13 +102,13 @@ export default function CourseTable({ coursesResult, onSelectedDataChange }: Cou
         course.coursename.toLowerCase().includes(filterText.toLowerCase()) ||
         course.coursecode.toLowerCase().includes(filterText.toLowerCase()) ||
         course.sectioncode.toLowerCase().includes(filterText.toLowerCase()) ||
-        course.classinstructorname.toLowerCase().includes(filterText.toLowerCase()) ||
-        course.classtime.toLowerCase().includes(filterText.toLowerCase()) ||
-        course.classexam.toLowerCase().includes(filterText.toLowerCase()) ||
-        course.classsetdes.toLowerCase().includes(filterText.toLowerCase()) ||
-        course.classstatusdes.toLowerCase().includes(filterText.toLowerCase()) ||
-        course.campusname.toLowerCase().includes(filterText.toLowerCase()) ||
-        course.levelname.toLowerCase().includes(filterText.toLowerCase())
+        (course.classinstructorname ? course.classinstructorname.toLowerCase().includes(filterText.toLowerCase()) : false) ||
+        (course.classtime ? course.classtime.toLowerCase().includes(filterText.toLowerCase()) : false) ||
+        (course.classexam ? course.classexam.toLowerCase().includes(filterText.toLowerCase()) : false) ||
+        (course.classsetdes ? course.classsetdes.toLowerCase().includes(filterText.toLowerCase()) : false) ||
+        (course.classstatusdes ? course.classstatusdes.toLowerCase().includes(filterText.toLowerCase()) : false) ||
+        (course.campusname ? course.campusname.toLowerCase().includes(filterText.toLowerCase()) : false) ||
+        (course.levelname ? course.levelname.toLowerCase().includes(filterText.toLowerCase()) : false)
     );
 
     const handleAddSelectRow = (rowData: unknown) => {

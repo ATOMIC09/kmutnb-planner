@@ -7,7 +7,8 @@ export default function CoursesHint() {
                     <p>- สามารถจัดตารางเรียนได้โดยการกดปุ่ม &ldquo;เลือก&ldquo; ที่ตารางวิชา</p>
                     <span>- สามารถค้นหา</span><span className="font-LINESeedSansTH_W_Bd">ทุกอย่าง</span><span>ได้หลายรูปแบบผ่านช่อง &ldquo;ค้นหาจากผลลัพธ์&ldquo;</span>
                     <p>&nbsp;&nbsp;&nbsp;เช่น 01012 เพื่อหารหัสวิชาที่ขึ้นต้นด้วย 01012...</p>
-                    <p>&nbsp;&nbsp;&nbsp;เช่น 30/08/67 เพื่อหาวิชาที่สอบในวันที่ 30 ส.ค. 67</p>
+                    <p>&nbsp;&nbsp;&nbsp;เช่น 30/08/67 เพื่อหาวิชาที่สอบในวันที่ 30 ส.ค. 67</p> 
+                    <p>&nbsp;&nbsp;&nbsp;เช่น S.8 เพื่อหาวิชาในตอนเรียนที่ 8</p> 
                     <p></p><span className="font-LINESeedSansTH_W_Bd">&nbsp;&nbsp;&nbsp;สรุป: </span><span>เห็นอะไรในตาราง ก็หาได้ตามที่เห็นในตารางนั่นแหละ</span>
                     
 
